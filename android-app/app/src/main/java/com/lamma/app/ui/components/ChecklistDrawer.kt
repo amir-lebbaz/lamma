@@ -42,6 +42,7 @@ fun ChecklistBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         containerColor = colors.bgSurface,
+        shape = RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp),
         dragHandle = {
             Box(
                 modifier = Modifier
@@ -49,7 +50,7 @@ fun ChecklistBottomSheet(
                     .width(36.dp)
                     .height(4.dp)
                     .clip(CircleShape)
-                    .background(colors.border)
+                    .background(colors.borderSubtle)
             )
         }
     ) {
@@ -68,13 +69,13 @@ fun ChecklistBottomSheet(
                 Column {
                     Text(
                         text = "نواقص البيت 🛒",
-                        color = colors.accent,
+                        color = colors.textPrimary,
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold
                     )
                     Text(
                         text = "قائمة مشتركة متزامنة لحظياً بين أفراد العائلة",
-                        color = colors.border,
+                        color = colors.textMuted,
                         fontSize = 11.sp
                     )
                 }
@@ -83,7 +84,7 @@ fun ChecklistBottomSheet(
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "إغلاق",
-                        tint = colors.border
+                        tint = colors.textMuted
                     )
                 }
             }
@@ -99,17 +100,17 @@ fun ChecklistBottomSheet(
                 OutlinedTextField(
                     value = newItemText,
                     onValueChange = { newItemText = it },
-                    placeholder = { Text("أضف غرضاً ناقصاً (خبز، حليب...)", fontSize = 13.sp, color = colors.border) },
+                    placeholder = { Text("أضف غرضاً ناقصاً (خبز، حليب...)", fontSize = 13.sp, color = colors.textMuted) },
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = colors.accent,
-                        unfocusedTextColor = colors.accent,
-                        focusedBorderColor = colors.accent,
-                        unfocusedBorderColor = colors.border.copy(alpha = 0.5f),
-                        focusedContainerColor = colors.bgMain,
-                        unfocusedContainerColor = colors.bgMain
+                        focusedTextColor = colors.textPrimary,
+                        unfocusedTextColor = colors.textPrimary,
+                        focusedBorderColor = colors.accentPrimary,
+                        unfocusedBorderColor = colors.borderSubtle,
+                        focusedContainerColor = colors.bgCanvas,
+                        unfocusedContainerColor = colors.bgCanvas
                     ),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.weight(1f)
                 )
 
@@ -123,13 +124,14 @@ fun ChecklistBottomSheet(
                     },
                     modifier = Modifier
                         .size(48.dp)
-                        .clip(CircleShape)
-                        .background(colors.bubbleOutgoing)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(colors.accentPrimary)
+                        .border(1.dp, colors.borderSubtle, RoundedCornerShape(10.dp))
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "إضافة غرض",
-                        tint = colors.accent
+                        tint = colors.textPrimary
                     )
                 }
             }
@@ -146,7 +148,7 @@ fun ChecklistBottomSheet(
                 ) {
                     Text(
                         text = "كل النواقص متوفرة والحمد لله ✨",
-                        color = colors.border,
+                        color = colors.textMuted,
                         fontSize = 13.sp
                     )
                 }
@@ -159,9 +161,9 @@ fun ChecklistBottomSheet(
                 ) {
                     items(checklist, key = { it.id }) { item ->
                         Surface(
-                            color = colors.bgMain.copy(alpha = 0.7f),
-                            shape = RoundedCornerShape(14.dp),
-                            border = BorderStroke(1.dp, colors.border.copy(alpha = 0.3f)),
+                            color = colors.bgCanvas,
+                            shape = RoundedCornerShape(10.dp),
+                            border = BorderStroke(1.dp, colors.borderSubtle),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable { onToggleItem(item.id) }
@@ -183,15 +185,15 @@ fun ChecklistBottomSheet(
                                         modifier = Modifier
                                             .size(22.dp)
                                             .clip(CircleShape)
-                                            .background(if (item.isCompleted) colors.accent else Color.Transparent)
-                                            .border(1.5.dp, colors.accent, CircleShape),
+                                            .background(if (item.isCompleted) colors.accentPrimary else Color.Transparent)
+                                            .border(1.5.dp, colors.accentPrimary, CircleShape),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         if (item.isCompleted) {
                                             Icon(
                                                 imageVector = Icons.Default.Check,
                                                 contentDescription = null,
-                                                tint = colors.bgMain,
+                                                tint = colors.textPrimary,
                                                 modifier = Modifier.size(14.dp)
                                             )
                                         }
@@ -200,14 +202,14 @@ fun ChecklistBottomSheet(
                                     Column {
                                         Text(
                                             text = item.text,
-                                            color = if (item.isCompleted) colors.border else colors.accent,
+                                            color = if (item.isCompleted) colors.textMuted else colors.textPrimary,
                                             fontSize = 13.5.sp,
-                                            fontWeight = if (item.isCompleted) FontWeight.Normal else FontWeight.SemiBold,
+                                            fontWeight = if (item.isCompleted) FontWeight.Normal else FontWeight.Medium,
                                             textDecoration = if (item.isCompleted) TextDecoration.LineThrough else null
                                         )
                                         Text(
                                             text = "أضافه: ${item.addedBy}",
-                                            color = colors.border.copy(alpha = 0.7f),
+                                            color = colors.textMuted,
                                             fontSize = 10.sp
                                         )
                                     }

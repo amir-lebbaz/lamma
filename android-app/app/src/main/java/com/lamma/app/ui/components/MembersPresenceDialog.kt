@@ -42,8 +42,8 @@ fun MembersPresenceDialog(
     Dialog(onDismissRequest = onClose) {
         Surface(
             color = colors.bgSurface,
-            shape = RoundedCornerShape(24.dp),
-            border = BorderStroke(1.dp, colors.border.copy(alpha = 0.4f)),
+            shape = RoundedCornerShape(14.dp),
+            border = BorderStroke(1.dp, colors.borderSubtle),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp, horizontal = 8.dp)
@@ -62,37 +62,38 @@ fun MembersPresenceDialog(
                 ) {
                     Text(
                         text = "أفراد العائلة والحضور 👨‍👩‍👧‍👦",
-                        color = colors.accent,
+                        color = colors.textPrimary,
                         fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold
                     )
                     IconButton(onClick = onClose, modifier = Modifier.size(28.dp)) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "إغلاق",
-                            tint = colors.border
+                            tint = colors.textMuted
                         )
                     }
                 }
 
-                HorizontalDivider(color = colors.border.copy(alpha = 0.3f))
+                HorizontalDivider(color = colors.borderSubtle)
 
                 // Carrier USSD Info & Selector
                 Surface(
-                    color = colors.bgMain,
-                    shape = RoundedCornerShape(12.dp),
+                    color = colors.bgCanvas,
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, colors.borderSubtle),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(modifier = Modifier.padding(10.dp)) {
                         Text(
                             text = "خدمة الاتصال المجاني عند انقطاع الإنترنت (USSD):",
-                            color = colors.accent,
+                            color = colors.textPrimary,
                             fontSize = 11.5.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.SemiBold
                         )
                         Text(
                             text = "تفتح لوحة الاتصال برمز المشغّل لطلب إعادة الاتصال دون رصيد (0% SMS - بدون أي تكلفة).",
-                            color = colors.border,
+                            color = colors.textMuted,
                             fontSize = 10.sp,
                             lineHeight = 13.sp
                         )
@@ -112,9 +113,9 @@ fun MembersPresenceDialog(
                         val isOffline = !isSelf && PresenceManager.isOffline(member.lastSeen)
 
                         Surface(
-                            color = colors.bgMain,
-                            shape = RoundedCornerShape(14.dp),
-                            border = BorderStroke(1.dp, colors.border.copy(alpha = 0.25f)),
+                            color = colors.bgCanvas,
+                            shape = RoundedCornerShape(10.dp),
+                            border = BorderStroke(1.dp, colors.borderSubtle),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Column(
@@ -139,9 +140,10 @@ fun MembersPresenceDialog(
                                                     try {
                                                         Color(android.graphics.Color.parseColor(member.avatarColor))
                                                     } catch (e: Exception) {
-                                                        colors.bubbleOutgoing
+                                                        colors.accentPrimary
                                                     }
-                                                ),
+                                                )
+                                                .border(1.dp, colors.borderSubtle, CircleShape),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             Text(
@@ -155,13 +157,13 @@ fun MembersPresenceDialog(
                                         Column {
                                             Text(
                                                 text = member.displayName + if (member.nickname != null) " (${member.nickname})" else "",
-                                                color = colors.accent,
+                                                color = colors.textPrimary,
                                                 fontSize = 13.5.sp,
-                                                fontWeight = FontWeight.Bold
+                                                fontWeight = FontWeight.SemiBold
                                             )
                                             Text(
                                                 text = presenceText,
-                                                color = if (presenceText.contains("🟢")) Color(0xFF81C784) else colors.border,
+                                                color = if (presenceText.contains("🟢")) Color(0xFF81C784) else colors.textMuted,
                                                 fontSize = 11.sp
                                             )
                                         }
@@ -180,8 +182,8 @@ fun MembersPresenceDialog(
                                             }
                                         },
                                         shape = RoundedCornerShape(10.dp),
-                                        colors = ButtonDefaults.outlinedButtonColors(contentColor = colors.accent),
-                                        border = BorderStroke(1.dp, colors.accent.copy(alpha = 0.5f)),
+                                        colors = ButtonDefaults.outlinedButtonColors(contentColor = colors.textPrimary),
+                                        border = BorderStroke(1.dp, colors.borderSubtle),
                                         modifier = Modifier.fillMaxWidth(),
                                         contentPadding = PaddingValues(vertical = 4.dp, horizontal = 8.dp)
                                     ) {
@@ -189,13 +191,13 @@ fun MembersPresenceDialog(
                                             imageVector = Icons.Default.PhoneCallback,
                                             contentDescription = null,
                                             modifier = Modifier.size(15.dp),
-                                            tint = colors.accent
+                                            tint = colors.textPrimary
                                         )
                                         Spacer(modifier = Modifier.width(6.dp))
                                         Text(
                                             text = "طلب اتصال مجاني (USSD: ${selectedCarrierPreset.dialCode}) 📞",
                                             fontSize = 11.sp,
-                                            fontWeight = FontWeight.SemiBold
+                                            fontWeight = FontWeight.Medium
                                         )
                                     }
                                 }

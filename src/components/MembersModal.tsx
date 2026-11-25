@@ -45,30 +45,30 @@ export default function MembersModal({
       onClick={onClose}
     >
       <div
-        className="w-full sm:max-w-xs bg-[#251824] text-[#FADCD5] rounded-t-3xl sm:rounded-3xl p-4 shadow-2xl border border-[#765D67]/40 space-y-3 pb-safe animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 relative"
+        className="w-full sm:max-w-xs bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-t-[14px] sm:rounded-[14px] p-4 border border-[var(--border-subtle)] space-y-3 pb-safe animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Zino Toast */}
         {zinoToast && (
-          <div className="absolute top-2 left-2 right-2 z-30 p-2 rounded-xl bg-[var(--bubble-outgoing)] text-[var(--accent)] text-xs font-bold text-center border border-[var(--border)] shadow-lg animate-in fade-in">
+          <div className="absolute top-2 left-2 right-2 z-30 p-2 rounded-[10px] bg-[var(--bg-elevated)] text-[var(--text-primary)] text-xs font-semibold text-center border border-[var(--border-subtle)] animate-in fade-in">
             {ZINO_GREETING_TOAST}
           </div>
         )}
 
         {/* Header */}
-        <div className="flex items-center justify-between pb-2.5 border-b border-[#765D67]/30">
+        <div className="flex items-center justify-between pb-2.5 border-b border-[var(--border-subtle)]">
           <div className="flex items-center gap-1.5">
-            <h3 className="font-bold text-sm text-[#FADCD5]">
+            <h3 className="font-semibold text-sm text-[var(--text-primary)]">
               أفراد «لَمّة» العائلة
             </h3>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-black/30 text-[var(--accent)] font-bold border border-[#765D67]/40">
+            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[var(--bg-canvas)] text-[var(--text-muted)] font-medium border border-[var(--border-subtle)]">
               {onlineMembers.length} متصل
             </span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-1 rounded-xl text-[#B5B9BC] hover:bg-white/10 transition"
+            className="p-1 rounded-[10px] text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] transition"
           >
             <X className="w-4 h-4" />
           </button>
@@ -79,21 +79,21 @@ export default function MembersModal({
           {/* SPECIAL PASSIVE FAMILY MEMBER: Our Siamese Cat ZINO (زينو) */}
           <div
             onClick={handleZinoClick}
-            className="flex items-center justify-between p-2 rounded-xl bg-gradient-to-r from-[#3B2820]/30 to-[#251824]/40 border border-[#F5E6D3]/30 cursor-pointer hover:border-[#5BC0EB]/60 transition active:scale-98 shadow-2xs"
+            className="flex items-center justify-between p-2 rounded-[10px] bg-[var(--bg-canvas)] border border-[var(--border-subtle)] cursor-pointer hover:bg-[var(--bg-elevated)]/40 transition active:scale-98"
             title="انقر لتلقي سلام من زينو!"
           >
             <div className="flex items-center gap-2">
               <ZinoAvatar size={26} />
               <div>
                 <div className="flex items-center gap-1">
-                  <span className="font-bold text-xs text-[#F5E6D3]">
+                  <span className="font-semibold text-xs text-[var(--text-primary)]">
                     زينو (Zino)
                   </span>
-                  <span className="text-[8.5px] px-1 rounded bg-[#3B2820]/60 text-[#F5E6D3] border border-[#F5E6D3]/20">
+                  <span className="text-[8.5px] px-1 rounded-full bg-[var(--bg-elevated)] text-[var(--text-primary)] border border-[var(--border-subtle)]">
                     قط العائلة 🐾
                   </span>
                 </div>
-                <span className="text-[9.5px] text-[#5BC0EB]">
+                <span className="text-[9.5px] text-[var(--text-muted)]">
                   {ZINO_STATUSES[zinoStatusIndex]}
                 </span>
               </div>
@@ -104,8 +104,8 @@ export default function MembersModal({
           {/* Online Section */}
           {onlineMembers.length > 0 && (
             <div>
-              <div className="text-[10px] font-bold text-[var(--accent)] mb-1.5 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]"></span>
+              <div className="text-[10px] font-semibold text-[var(--text-primary)] mb-1.5 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)]"></span>
                 <span>المتصلون الآن ({onlineMembers.length})</span>
               </div>
               <div className="space-y-1.5">
@@ -114,11 +114,11 @@ export default function MembersModal({
                   return (
                     <div
                       key={member.id}
-                      className="flex items-center justify-between p-2 rounded-xl bg-black/25 border border-[#765D67]/30"
+                      className="flex items-center justify-between p-2 rounded-[10px] bg-[var(--bg-canvas)] border border-[var(--border-subtle)]"
                     >
                       <div className="flex items-center gap-2">
                         <div
-                          className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-[#1B0C1A] font-bold text-xs shadow-2xs"
+                          className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-[#1B0C1A] font-bold text-xs ring-1 ring-[var(--border-subtle)]"
                           style={{ backgroundColor: member.avatar_color }}
                         >
                           {member.avatar_url ? (
@@ -133,27 +133,27 @@ export default function MembersModal({
                         </div>
                         <div>
                           <div className="flex items-center gap-1">
-                            <span className="font-semibold text-xs text-[#FADCD5]">
+                            <span className="font-semibold text-xs text-[var(--text-primary)]">
                               {member.display_name}
                             </span>
                             {member.nickname && (
-                              <span className="text-[9.5px] text-[#765D67]">
+                              <span className="text-[9.5px] text-[var(--text-muted)]">
                                 ({member.nickname})
                               </span>
                             )}
                             {isMe && (
-                              <span className="text-[9px] bg-black/40 text-[var(--accent)] px-1 rounded font-bold border border-[#765D67]/30">
+                              <span className="text-[9px] bg-[var(--bg-elevated)] text-[var(--text-primary)] px-1 rounded-full font-medium border border-[var(--border-subtle)]">
                                 أنت
                               </span>
                             )}
                           </div>
-                          <span className="text-[10px] text-[var(--accent)] font-medium">
+                          <span className="text-[10px] text-[var(--text-muted)] font-medium">
                             {lastSeenText}
                           </span>
                         </div>
                       </div>
 
-                      <span className="w-2 h-2 rounded-full bg-[var(--accent)] shadow-xs animate-pulse"></span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)]"></span>
                     </div>
                   );
                 })}
@@ -164,61 +164,52 @@ export default function MembersModal({
           {/* Offline Section */}
           {offlineMembers.length > 0 && (
             <div>
-              <div className="text-[10px] font-bold text-[#765D67] mb-1.5 flex items-center gap-1">
-                <Circle className="w-1.5 h-1.5 text-[#765D67] fill-current" />
+              <div className="text-[10px] font-semibold text-[var(--text-muted)] mb-1.5 flex items-center gap-1">
+                <Circle className="w-1.5 h-1.5 text-[var(--text-muted)]" />
                 <span>غير متصلين ({offlineMembers.length})</span>
               </div>
               <div className="space-y-1.5">
-                {offlineMembers.map(({ member, lastSeenText }) => {
-                  return (
-                    <div
-                      key={member.id}
-                      className="flex items-center justify-between p-2 rounded-xl bg-black/15 border border-[#765D67]/20 opacity-70"
-                    >
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-[#1B0C1A] font-bold text-xs grayscale"
-                          style={{ backgroundColor: member.avatar_color }}
-                        >
-                          {member.avatar_url ? (
-                            <img
-                              src={member.avatar_url}
-                              alt={member.display_name}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <span>{member.display_name.charAt(0)}</span>
-                          )}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-1">
-                            <span className="font-semibold text-xs text-[#B5B9BC]">
-                              {member.display_name}
-                            </span>
-                            {member.nickname && (
-                              <span className="text-[9.5px] text-[#765D67]">
-                                ({member.nickname})
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-[10px] text-[#765D67]">
-                            {lastSeenText}
-                          </p>
-                        </div>
+                {offlineMembers.map(({ member, lastSeenText }) => (
+                  <div
+                    key={member.id}
+                    className="flex items-center justify-between p-2 rounded-[10px] bg-[var(--bg-canvas)]/50 border border-[var(--border-subtle)]/50 opacity-70"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center text-[#1B0C1A] font-bold text-xs grayscale ring-1 ring-[var(--border-subtle)]"
+                        style={{ backgroundColor: member.avatar_color }}
+                      >
+                        {member.avatar_url ? (
+                          <img
+                            src={member.avatar_url}
+                            alt={member.display_name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span>{member.display_name.charAt(0)}</span>
+                        )}
                       </div>
-
-                      <span className="w-2 h-2 rounded-full bg-[#765D67]/50"></span>
+                      <div>
+                        <div className="flex items-center gap-1">
+                          <span className="font-normal text-xs text-[var(--text-muted)]">
+                            {member.display_name}
+                          </span>
+                        </div>
+                        <span className="text-[9px] text-[var(--text-muted)]">
+                          {lastSeenText}
+                        </span>
+                      </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </div>
           )}
         </div>
 
         {/* Footer info note */}
-        <div className="p-2 rounded-xl bg-black/25 border border-[#765D67]/30 flex items-center justify-center gap-1.5 text-[10px] text-[#765D67] text-center">
-          <Heart className="w-3 h-3 text-[var(--accent)] fill-current flex-shrink-0" />
+        <div className="p-2 rounded-[10px] bg-[var(--bg-canvas)] border border-[var(--border-subtle)] flex items-center justify-center gap-1.5 text-[10px] text-[var(--text-muted)] text-center">
+          <Heart className="w-3 h-3 text-[var(--text-primary)] fill-current flex-shrink-0" />
           <span>مساحة «لَمّة» خاصة وموحدة لجميع أفراد الأسرة</span>
         </div>
       </div>

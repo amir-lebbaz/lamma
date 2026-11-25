@@ -3,47 +3,73 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════════
-   «لَمّة» (Lamma) - Exclusive 2-Theme Design System Tokens
+   «لَمّة» (Lamma) - Strict UI/UX Design System Tokens
    ═══════════════════════════════════════════════════════════════ */
 
-/* Default / Theme 1: «سكون الغسق» (Sakura Dusk) */
+/* Theme A: Sakura Dusk (ثيم الساكورا المسائي - الافتراضي) */
 :root,
 .theme-sakura-dusk {
-  --bg-main: #1B0C1A;
+  --bg-canvas: #1B0C1A;
   --bg-surface: #2D222F;
-  --bubble-outgoing: #6D3C52;
-  --bubble-outgoing-text: #FADCD5;
-  --bubble-incoming: #4B2138;
-  --bubble-incoming-text: #FADCD5;
+  --bg-elevated: #4B2138;
+  --accent-primary: #6D3C52;
   --text-primary: #FADCD5;
-  --accent: #FADCD5;
-  --text-muted: #765D67;
-  --border: #765D67;
-  --background: #1B0C1A;
-  --foreground: #FADCD5;
+  --text-muted: rgba(250, 220, 213, 0.65);
+  --border-subtle: rgba(250, 220, 213, 0.12);
+
+  /* RGB channels for Tailwind slash-alpha support (e.g. bg-surface/90) */
+  --canvas-rgb: 27 12 26;
+  --surface-rgb: 45 34 47;
+  --elevated-rgb: 75 33 56;
+  --accent-rgb: 109 60 82;
+  --text-rgb: 250 220 213;
+
+  /* Legacy / Utility Token Aliases */
+  --bg-main: var(--bg-canvas);
+  --background: var(--bg-canvas);
+  --foreground: var(--text-primary);
+  --bubble-outgoing: var(--accent-primary);
+  --bubble-outgoing-text: var(--text-primary);
+  --bubble-incoming: var(--bg-elevated);
+  --bubble-incoming-text: var(--text-primary);
+  --accent: var(--text-primary);
+  --border: var(--border-subtle);
 }
 
-/* Theme 2: «ليل المخمل» (Velvet Ink) */
+/* Theme B: Velvet Ink (ثيم حبر المخمل) */
 .theme-velvet-ink {
-  --bg-main: #0B1421;
+  --bg-canvas: #0B1421;
   --bg-surface: #283041;
-  --bubble-outgoing: #34394A;
-  --bubble-outgoing-text: #F1F3F5;
-  --bubble-incoming: #1E2533;
-  --bubble-incoming-text: #B5B9BC;
+  --bg-elevated: #34394A;
+  --accent-primary: #435066;
   --text-primary: #B5B9BC;
-  --accent: #D0D4D7;
-  --text-muted: #34394A;
-  --border: #34394A;
-  --background: #0B1421;
-  --foreground: #B5B9BC;
+  --text-muted: rgba(181, 185, 188, 0.60);
+  --border-subtle: rgba(181, 185, 188, 0.12);
+
+  /* RGB channels for Tailwind slash-alpha support (e.g. bg-surface/90) */
+  --canvas-rgb: 11 20 33;
+  --surface-rgb: 40 48 65;
+  --elevated-rgb: 52 57 74;
+  --accent-rgb: 67 80 102;
+  --text-rgb: 181 185 188;
+
+  /* Legacy / Utility Token Aliases */
+  --bg-main: var(--bg-canvas);
+  --background: var(--bg-canvas);
+  --foreground: var(--text-primary);
+  --bubble-outgoing: var(--accent-primary);
+  --bubble-outgoing-text: #F1F3F5;
+  --bubble-incoming: var(--bg-elevated);
+  --bubble-incoming-text: var(--text-primary);
+  --accent: var(--text-primary);
+  --border: var(--border-subtle);
 }
 
-/* Smooth 0.3s ease transitions for theme switches */
+/* Smooth 0.25s transitions for theme switches */
 * {
   transition-property: background-color, border-color, color, fill, stroke;
-  transition-duration: 0.3s;
-  transition-timing-function: ease;
+  transition-duration: 0.25s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Prevent unwanted mobile behaviors */
@@ -84,14 +110,12 @@ input, textarea, select, button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  opacity: 0.5;
+  background: var(--border-subtle);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
-  opacity: 0.8;
+  background: var(--text-muted);
 }
 
 /* Native-like smooth scrolling */

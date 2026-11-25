@@ -62,6 +62,14 @@ export default function FamilyChatPage() {
     }
   }, []);
 
+  // Synchronize document.documentElement theme class
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.remove('theme-sakura-dusk', 'theme-velvet-ink');
+      document.documentElement.classList.add(themeId === 'velvet-ink' ? 'theme-velvet-ink' : 'theme-sakura-dusk');
+    }
+  }, [themeId]);
+
   // Load saved profile, theme, and background on initial render
   useEffect(() => {
     // Desktop Force-Alert: unlock Web Audio on first click & request notification permission
@@ -465,10 +473,10 @@ export default function FamilyChatPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#1B0C1A]">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-canvas)] text-[var(--text-primary)]">
         <div className="flex flex-col items-center gap-2.5">
-          <Loader2 className="w-6 h-6 text-[#FADCD5] animate-spin" />
-          <span className="text-xs font-semibold text-[#FADCD5]">
+          <Loader2 className="w-6 h-6 text-[var(--text-primary)] animate-spin" />
+          <span className="text-xs font-semibold text-[var(--text-primary)]">
             جارِ فتح لَمّة العائلة...
           </span>
         </div>

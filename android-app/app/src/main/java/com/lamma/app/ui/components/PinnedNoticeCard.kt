@@ -2,20 +2,16 @@ package com.lamma.app.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,7 +34,7 @@ fun PinnedNoticeCard(
 
     Surface(
         color = colors.bgSurface.copy(alpha = 0.95f),
-        border = BorderStroke(1.dp, colors.border.copy(alpha = 0.4f)),
+        border = BorderStroke(1.dp, colors.borderSubtle),
         shape = RoundedCornerShape(bottomStart = 14.dp, bottomEnd = 14.dp),
         modifier = modifier
             .fillMaxWidth()
@@ -60,14 +56,14 @@ fun PinnedNoticeCard(
                     Icon(
                         imageVector = Icons.Default.PushPin,
                         contentDescription = null,
-                        tint = colors.accent,
+                        tint = colors.textPrimary,
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
                         text = "ملاحظة العائلة المثبتة",
-                        color = colors.accent,
+                        color = colors.textPrimary,
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
 
@@ -82,7 +78,7 @@ fun PinnedNoticeCard(
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "تعديل الملاحظة",
-                            tint = colors.border,
+                            tint = colors.textMuted,
                             modifier = Modifier.size(14.dp)
                         )
                     }
@@ -93,14 +89,14 @@ fun PinnedNoticeCard(
                 Column(modifier = Modifier.padding(top = 6.dp)) {
                     Text(
                         text = notice,
-                        color = colors.accent,
+                        color = colors.textPrimary,
                         fontSize = 13.sp,
                         lineHeight = 18.sp
                     )
                     if (!pinnedBy.isNullOrBlank()) {
                         Text(
                             text = "ثبتها: $pinnedBy",
-                            color = colors.border,
+                            color = colors.textMuted,
                             fontSize = 10.sp,
                             modifier = Modifier.padding(top = 4.dp)
                         )
@@ -116,9 +112,9 @@ fun PinnedNoticeCard(
             title = {
                 Text(
                     text = "تعديل الملاحظة المثبتة",
-                    color = colors.accent,
+                    color = colors.textPrimary,
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.SemiBold
                 )
             },
             text = {
@@ -126,11 +122,12 @@ fun PinnedNoticeCard(
                     value = editNoticeText,
                     onValueChange = { editNoticeText = it },
                     label = { Text("نص الملاحظة العائلية") },
+                    shape = RoundedCornerShape(10.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = colors.accent,
-                        unfocusedTextColor = colors.accent,
-                        focusedBorderColor = colors.accent,
-                        unfocusedBorderColor = colors.border
+                        focusedTextColor = colors.textPrimary,
+                        unfocusedTextColor = colors.textPrimary,
+                        focusedBorderColor = colors.accentPrimary,
+                        unfocusedBorderColor = colors.borderSubtle
                     ),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -141,16 +138,21 @@ fun PinnedNoticeCard(
                         onUpdateNotice(editNoticeText)
                         isEditDialogOpen = false
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = colors.bubbleOutgoing)
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = colors.accentPrimary)
                 ) {
-                    Text("حفظ", color = colors.accent)
+                    Text("حفظ", color = colors.textPrimary)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { isEditDialogOpen = false }) {
-                    Text("إلغاء", color = colors.border)
+                TextButton(
+                    onClick = { isEditDialogOpen = false },
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text("إلغاء", color = colors.textMuted)
                 }
             },
+            shape = RoundedCornerShape(14.dp),
             containerColor = colors.bgSurface
         )
     }

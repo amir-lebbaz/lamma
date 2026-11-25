@@ -1,5 +1,6 @@
 package com.lamma.app.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,7 +54,8 @@ fun ComposerBar(
     val iconSize = if (isUltraLite) 22.dp else 19.dp
 
     Surface(
-        color = colors.bgSurface.copy(alpha = if (isUltraLite) 1f else 0.94f),
+        color = colors.bgSurface,
+        border = BorderStroke(1.dp, colors.borderSubtle),
         modifier = modifier.fillMaxWidth()
     ) {
         Column(
@@ -63,8 +66,9 @@ fun ComposerBar(
             // Attached Reply Preview Banner
             if (replyingTo != null) {
                 Surface(
-                    color = colors.bgMain.copy(alpha = 0.7f),
-                    shape = RoundedCornerShape(12.dp),
+                    color = colors.bgCanvas.copy(alpha = 0.7f),
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, colors.borderSubtle),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 6.dp)
@@ -82,19 +86,19 @@ fun ComposerBar(
                                 modifier = Modifier
                                     .width(3.dp)
                                     .height(28.dp)
-                                    .background(colors.accent, RoundedCornerShape(2.dp))
+                                    .background(colors.textPrimary, RoundedCornerShape(2.dp))
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
                                 Text(
                                     text = "الرد على ${replyingTo.senderName}",
-                                    color = colors.accent,
+                                    color = colors.textPrimary,
                                     fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.SemiBold
                                 )
                                 Text(
                                     text = replyingTo.content ?: "صورة مرفقة",
-                                    color = colors.border,
+                                    color = colors.textMuted,
                                     fontSize = 11.sp,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
@@ -109,7 +113,7 @@ fun ComposerBar(
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "إلغاء الرد",
-                                tint = colors.border,
+                                tint = colors.textMuted,
                                 modifier = Modifier.size(16.dp)
                             )
                         }
@@ -120,8 +124,9 @@ fun ComposerBar(
             // Urgent Buzz Active Warning Banner
             if (isUrgentBuzzActive) {
                 Surface(
-                    color = Color(0xFF6D3C52),
+                    color = colors.accentPrimary,
                     shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, colors.borderSubtle),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 6.dp)
@@ -133,9 +138,9 @@ fun ComposerBar(
                     ) {
                         Text(
                             text = "🔔 وضع النداء العاجل مفعّل: سيرن هاتف العائلة بصوت إنذار قوي!",
-                            color = Color(0xFFFADCD5),
+                            color = colors.textPrimary,
                             fontSize = 10.5.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Medium
                         )
                         IconButton(
                             onClick = { isUrgentBuzzActive = false },
@@ -144,7 +149,7 @@ fun ComposerBar(
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = null,
-                                tint = Color(0xFFFADCD5),
+                                tint = colors.textPrimary,
                                 modifier = Modifier.size(14.dp)
                             )
                         }
@@ -163,15 +168,16 @@ fun ComposerBar(
                     onClick = { isUrgentBuzzActive = !isUrgentBuzzActive },
                     modifier = Modifier
                         .size(buttonSize)
-                        .clip(CircleShape)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(
-                            if (isUrgentBuzzActive) Color(0xFFE63946) else colors.bgMain.copy(alpha = 0.6f)
+                            if (isUrgentBuzzActive) Color(0xFFC85A65) else colors.bgCanvas
                         )
+                        .border(1.dp, colors.borderSubtle, RoundedCornerShape(10.dp))
                 ) {
                     Icon(
                         imageVector = Icons.Default.NotificationsActive,
                         contentDescription = "نداء عاجل",
-                        tint = if (isUrgentBuzzActive) Color.White else colors.accent,
+                        tint = if (isUrgentBuzzActive) colors.textPrimary else colors.textMuted,
                         modifier = Modifier.size(iconSize)
                     )
                 }
@@ -181,13 +187,14 @@ fun ComposerBar(
                     onClick = onAttachPhoto,
                     modifier = Modifier
                         .size(buttonSize)
-                        .clip(CircleShape)
-                        .background(colors.bgMain.copy(alpha = 0.6f))
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(colors.bgCanvas)
+                        .border(1.dp, colors.borderSubtle, RoundedCornerShape(10.dp))
                 ) {
                     Icon(
                         imageVector = Icons.Default.Image,
                         contentDescription = "معرض الصور",
-                        tint = colors.accent,
+                        tint = colors.textMuted,
                         modifier = Modifier.size(iconSize)
                     )
                 }
@@ -197,13 +204,14 @@ fun ComposerBar(
                     onClick = onCapturePhoto,
                     modifier = Modifier
                         .size(buttonSize)
-                        .clip(CircleShape)
-                        .background(colors.bgMain.copy(alpha = 0.6f))
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(colors.bgCanvas)
+                        .border(1.dp, colors.borderSubtle, RoundedCornerShape(10.dp))
                 ) {
                     Icon(
                         imageVector = Icons.Default.CameraAlt,
                         contentDescription = "التقاط بالكاميرا",
-                        tint = colors.accent,
+                        tint = colors.textMuted,
                         modifier = Modifier.size(iconSize)
                     )
                 }
@@ -212,20 +220,21 @@ fun ComposerBar(
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .clip(RoundedCornerShape(22.dp))
-                        .background(colors.bgMain)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(colors.bgCanvas)
                         .border(
                             1.dp,
-                            if (isUrgentBuzzActive) Color(0xFFE63946) else colors.border.copy(alpha = 0.4f),
-                            RoundedCornerShape(22.dp)
+                            if (isUrgentBuzzActive) Color(0xFFC85A65) else colors.borderSubtle,
+                            RoundedCornerShape(10.dp)
                         )
                         .padding(horizontal = 12.dp, vertical = 8.dp)
                 ) {
                     if (text.isEmpty()) {
                         Text(
                             text = if (isUrgentBuzzActive) "اكتب نداءك العاجل للعائلة..." else "اكتب رسالتك العائلية...",
-                            color = colors.border.copy(alpha = 0.7f),
-                            fontSize = fontSize
+                            color = colors.textMuted,
+                            fontSize = fontSize,
+                            style = TextStyle(textDirection = TextDirection.Content)
                         )
                     }
 
@@ -236,11 +245,12 @@ fun ComposerBar(
                             onTyping(it.isNotBlank())
                         },
                         textStyle = TextStyle(
-                            color = colors.accent,
+                            color = colors.textPrimary,
                             fontSize = fontSize,
-                            lineHeight = (fontSize.value * 1.35).sp
+                            lineHeight = (fontSize.value * 1.35).sp,
+                            textDirection = TextDirection.Content
                         ),
-                        cursorBrush = SolidColor(colors.accent),
+                        cursorBrush = SolidColor(colors.textPrimary),
                         maxLines = 5,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -260,15 +270,16 @@ fun ComposerBar(
                     enabled = text.isNotBlank(),
                     modifier = Modifier
                         .size(buttonSize)
-                        .clip(CircleShape)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(
-                            if (text.isNotBlank()) colors.bubbleOutgoing else colors.bgMain.copy(alpha = 0.4f)
+                            if (text.isNotBlank()) colors.accentPrimary else colors.bgCanvas
                         )
+                        .border(1.dp, colors.borderSubtle, RoundedCornerShape(10.dp))
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Send,
                         contentDescription = "إرسال",
-                        tint = if (text.isNotBlank()) colors.accent else colors.border.copy(alpha = 0.5f),
+                        tint = if (text.isNotBlank()) colors.textPrimary else colors.textMuted.copy(alpha = 0.5f),
                         modifier = Modifier.size(iconSize)
                     )
                 }

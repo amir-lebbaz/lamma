@@ -56,22 +56,22 @@ export default function PinnedNoticeBanner({
   // Compact 1-line pill on mobile when not fully expanded
   if (!isOpen && notice) {
     return (
-      <div className="bg-black/30 border-b border-[var(--border)]/40 px-3.5 py-1.5 transition-all">
+      <div className="bg-[var(--bg-surface)]/80 border-b border-[var(--border-subtle)] px-3.5 py-1.5 transition-all">
         <div className="max-w-3xl lg:max-w-4xl mx-auto flex items-center justify-between gap-2 text-xs">
           <button
             type="button"
             onClick={onToggleOpen}
-            className="flex items-center gap-1.5 text-[var(--accent)] min-w-0 text-right flex-1"
+            className="flex items-center gap-1.5 text-[var(--text-primary)] min-w-0 text-right flex-1"
           >
-            <Pin className="w-3.5 h-3.5 fill-current text-[var(--accent)] flex-shrink-0" />
-            <span className="font-bold text-[var(--accent)] flex-shrink-0 text-[11px]">تنبيه:</span>
-            <span className="truncate text-[var(--text-primary)] text-xs font-medium">{notice}</span>
+            <Pin className="w-3.5 h-3.5 fill-current text-[var(--text-primary)] flex-shrink-0" />
+            <span className="font-semibold text-[var(--text-primary)] flex-shrink-0 text-[11px]">تنبيه:</span>
+            <span className="truncate text-[var(--text-primary)] text-xs font-normal">{notice}</span>
           </button>
 
           <button
             type="button"
             onClick={onToggleOpen}
-            className="p-1 text-[var(--text-muted)] hover:text-[var(--accent)] flex-shrink-0"
+            className="p-1 text-[var(--text-muted)] hover:text-[var(--text-primary)] flex-shrink-0"
             title="عرض التفاصيل"
           >
             <ChevronDown className="w-3.5 h-3.5" />
@@ -87,19 +87,19 @@ export default function PinnedNoticeBanner({
 
   // Expanded View
   return (
-    <div className="bg-[var(--bg-surface)]/90 backdrop-blur-md border-b border-[var(--border)]/40 px-3.5 py-3 sm:px-6 transition-all shadow-xs text-[var(--text-primary)]">
+    <div className="bg-[var(--bg-surface)]/95 backdrop-blur-md border-b border-[var(--border-subtle)] px-3.5 py-3 sm:px-6 transition-all text-[var(--text-primary)]">
       <div className="max-w-3xl lg:max-w-4xl mx-auto">
         {isEditing ? (
           <form onSubmit={handleSave} className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[var(--accent)] flex items-center gap-1.5">
-                <Pin className="w-3.5 h-3.5 fill-current" />
+              <span className="text-xs font-semibold text-[var(--text-primary)] flex items-center gap-1.5">
+                <Pin className="w-3.5 h-3.5 fill-current text-[var(--text-primary)]" />
                 تثبيت تذكير عائلي
               </span>
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="text-xs text-[var(--text-muted)] p-1 hover:text-[var(--accent)]"
+                className="text-xs text-[var(--text-muted)] p-1 hover:text-[var(--text-primary)]"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -111,7 +111,7 @@ export default function PinnedNoticeBanner({
               placeholder="اكتب التذكير هنا (مثلاً: موعد العشاء الساعة 8:30، لا تنسوا الخبز...)"
               rows={2}
               maxLength={200}
-              className="w-full px-3 py-2 rounded-2xl bg-black/30 border border-[var(--border)]/50 text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--bubble-outgoing)] resize-none"
+              className="w-full px-3 py-2 rounded-[10px] bg-[var(--bg-canvas)] border border-[var(--border-subtle)] text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)] resize-none"
               autoFocus
             />
 
@@ -132,14 +132,14 @@ export default function PinnedNoticeBanner({
                   type="button"
                   onClick={() => setIsEditing(false)}
                   disabled={isSaving}
-                  className="px-3 py-1.5 rounded-xl text-xs text-[var(--text-muted)] hover:bg-white/10"
+                  className="px-3 py-1.5 rounded-[10px] text-xs text-[var(--text-muted)] hover:bg-[var(--bg-elevated)]"
                 >
                   إلغاء
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving || !draftNotice.trim()}
-                  className="px-4 py-1.5 rounded-xl bg-[var(--bubble-outgoing)] hover:opacity-90 text-[var(--accent)] text-xs font-bold shadow-2xs flex items-center gap-1 disabled:opacity-50 border border-[var(--border)]/40"
+                  className="px-4 py-1.5 rounded-[10px] bg-[var(--accent-primary)] hover:opacity-90 text-[var(--text-primary)] text-xs font-medium flex items-center gap-1 disabled:opacity-50 border border-[var(--border-subtle)]"
                 >
                   <Check className="w-3.5 h-3.5" />
                   <span>{isSaving ? 'جارِ الحفظ...' : 'تثبيت التنبيه'}</span>
@@ -150,16 +150,16 @@ export default function PinnedNoticeBanner({
         ) : notice ? (
           <div className="flex items-start justify-between gap-2.5">
             <div className="flex items-start gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-xl bg-black/30 border border-[var(--border)]/40 flex items-center justify-center text-[var(--accent)] flex-shrink-0 mt-0.5">
+              <div className="w-7 h-7 rounded-[10px] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-primary)] flex-shrink-0 mt-0.5">
                 <Pin className="w-3.5 h-3.5 fill-current" />
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5 text-[11px] text-[var(--text-muted)] mb-0.5">
-                  <span className="font-bold text-[var(--accent)]">تذكير عائلي مثبت</span>
+                  <span className="font-semibold text-[var(--text-primary)]">تذكير عائلي مثبت</span>
                   {pinnedBy && <span>• {pinnedBy}</span>}
                   {pinnedAt && <span>• {formatRelativeTime(pinnedAt)}</span>}
                 </div>
-                <p className="text-xs sm:text-sm text-[var(--text-primary)] font-semibold leading-relaxed break-words whitespace-pre-wrap">
+                <p className="text-xs sm:text-sm text-[var(--text-primary)] font-medium leading-relaxed break-words whitespace-pre-wrap">
                   {notice}
                 </p>
               </div>
@@ -169,7 +169,7 @@ export default function PinnedNoticeBanner({
               <button
                 type="button"
                 onClick={handleStartEdit}
-                className="p-1.5 rounded-xl text-[var(--accent)] hover:bg-white/10 transition"
+                className="p-1.5 rounded-[10px] text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition"
                 title="تعديل التنبيه"
               >
                 <Edit3 className="w-4 h-4" />
@@ -177,7 +177,7 @@ export default function PinnedNoticeBanner({
               <button
                 type="button"
                 onClick={onToggleOpen}
-                className="p-1.5 rounded-xl text-[var(--text-muted)] hover:bg-white/10 transition"
+                className="p-1.5 rounded-[10px] text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] transition"
                 title="طي"
               >
                 <ChevronUp className="w-4 h-4" />
@@ -187,13 +187,13 @@ export default function PinnedNoticeBanner({
         ) : (
           <div className="flex items-center justify-between gap-2 py-0.5">
             <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-              <Bell className="w-3.5 h-3.5 text-[var(--accent)]" />
+              <Bell className="w-3.5 h-3.5 text-[var(--text-primary)]" />
               <span>لا يوجد تنبيه مثبت حالياً</span>
             </div>
             <button
               type="button"
               onClick={handleStartEdit}
-              className="px-3 py-1 rounded-xl bg-[var(--bubble-outgoing)] text-[var(--accent)] text-xs font-bold hover:opacity-90 transition flex items-center gap-1 border border-[var(--border)]/40"
+              className="px-3 py-1 rounded-[10px] bg-[var(--accent-primary)] text-[var(--text-primary)] text-xs font-medium hover:opacity-90 transition flex items-center gap-1 border border-[var(--border-subtle)]"
             >
               <Pin className="w-3 h-3" />
               <span>إضافة تنبيه</span>

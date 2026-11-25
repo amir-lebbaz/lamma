@@ -162,7 +162,7 @@ export default function MessageItem({
   /* Action toolbar for reactions, reply, copy, and delete */
   const renderToolbar = () => (
     <div
-      className={`absolute -top-9.5 z-20 flex items-center gap-0.5 bg-[var(--bg-surface)]/95 backdrop-blur-md border border-[var(--border)] shadow-md rounded-full px-2 py-1 transition-all duration-150 ${
+      className={`absolute -top-9.5 z-20 flex items-center gap-0.5 bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-sm rounded-full px-2 py-1 transition-all duration-150 ${
         isOwn ? 'right-0' : 'left-0'
       } ${
         showToolbar
@@ -366,7 +366,7 @@ export default function MessageItem({
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           style={{ transform: `translateX(${swipeOffset}px)` }}
-          className="relative max-w-[85%] sm:max-w-[70%] flex flex-col items-end transition-transform duration-75"
+          className="relative max-w-[82%] sm:max-w-[72%] flex flex-col items-end transition-transform duration-75"
         >
           {/* Action Toolbar */}
           {renderToolbar()}
@@ -374,11 +374,11 @@ export default function MessageItem({
           {/* Bubble Card (Styled with --bubble-outgoing) */}
           <div
             onClick={() => setShowToolbar((prev) => !prev)}
-            className="relative rounded-2xl rounded-tr-xs px-3.5 py-2 shadow-sm border border-[var(--border)]/50 bg-[var(--bubble-outgoing)] text-[var(--bubble-outgoing-text)] cursor-pointer sm:cursor-default select-text transition active:scale-[0.99]"
+            className="relative rounded-2xl rounded-br-[4px] px-3.5 py-2 border border-[var(--border-subtle)] bg-[var(--accent-primary)] text-[var(--text-primary)] cursor-pointer sm:cursor-default select-text transition active:scale-[0.99]"
           >
             {/* Header tag */}
             <div className="flex items-center justify-between gap-2 mb-1 select-none">
-              <span className="text-[9.5px] font-bold text-[var(--accent)] bg-black/25 px-1.5 py-0.2 rounded-md">
+              <span className="text-[9.5px] font-bold text-[var(--text-primary)] bg-black/20 px-1.5 py-0.5 rounded-md">
                 أنت
               </span>
             </div>
@@ -391,15 +391,18 @@ export default function MessageItem({
 
             {/* Text Content */}
             {message.content && (
-              <p className="message-content text-[13.5px] leading-relaxed whitespace-pre-wrap break-words font-normal text-[var(--bubble-outgoing-text)]">
+              <p
+                dir="auto"
+                className="message-content text-[13.5px] leading-relaxed whitespace-pre-wrap break-words font-normal text-[var(--text-primary)] select-text"
+              >
                 {message.content}
               </p>
             )}
 
             {/* Timestamp & Status Ticks */}
-            <div className="flex items-center justify-end gap-1 mt-1 text-[10px] text-[var(--bubble-outgoing-text)]/75 select-none font-mono">
+            <div className="flex items-center justify-end gap-1 mt-1 text-[11px] text-[var(--text-muted)] select-none font-mono">
               <span>{formatArabicTime(message.created_at)}</span>
-              <CheckCheck className="w-3.5 h-3.5 text-[var(--accent)] stroke-[2.2]" />
+              <CheckCheck className="w-3.5 h-3.5 text-[var(--text-primary)] stroke-[2.2]" />
             </div>
           </div>
 
@@ -445,7 +448,7 @@ export default function MessageItem({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         style={{ transform: `translateX(${swipeOffset}px)` }}
-        className="relative max-w-[88%] sm:max-w-[72%] flex items-start gap-2 transition-transform duration-75"
+        className="relative max-w-[82%] sm:max-w-[72%] flex items-start gap-2 transition-transform duration-75"
       >
         {/* Bubble + Reactions Column */}
         <div className="flex-1 min-w-0 flex flex-col items-start">
@@ -467,10 +470,10 @@ export default function MessageItem({
             )}
           </div>
 
-          {/* Bubble Card (Styled with --bubble-incoming) */}
+          {/* Bubble Card (Styled with --bg-elevated) */}
           <div
             onClick={() => setShowToolbar((prev) => !prev)}
-            className="relative w-full rounded-2xl rounded-tl-xs px-3.5 py-2 shadow-sm border border-[var(--border)] bg-[var(--bubble-incoming)] text-[var(--bubble-incoming-text)] cursor-pointer sm:cursor-default select-text transition active:scale-[0.99]"
+            className="relative w-full rounded-2xl rounded-bl-[4px] px-3.5 py-2 border border-[var(--border-subtle)] bg-[var(--bg-elevated)] text-[var(--text-primary)] cursor-pointer sm:cursor-default select-text transition active:scale-[0.99]"
           >
             {/* Quoted Message */}
             {renderReplyBanner()}
@@ -480,13 +483,16 @@ export default function MessageItem({
 
             {/* Text Content */}
             {message.content && (
-              <p className="message-content text-[13.5px] leading-relaxed whitespace-pre-wrap break-words font-normal text-[var(--bubble-incoming-text)]">
+              <p
+                dir="auto"
+                className="message-content text-[13.5px] leading-relaxed whitespace-pre-wrap break-words font-normal text-[var(--text-primary)] select-text"
+              >
                 {message.content}
               </p>
             )}
 
             {/* Timestamp */}
-            <div className="flex items-center justify-start gap-1 mt-1 text-[10px] text-[var(--text-muted)] select-none font-mono">
+            <div className="flex items-center justify-start gap-1 mt-1 text-[11px] text-[var(--text-muted)] select-none font-mono">
               <span>{formatArabicTime(message.created_at)}</span>
             </div>
           </div>

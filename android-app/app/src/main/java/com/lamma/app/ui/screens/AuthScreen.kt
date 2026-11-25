@@ -59,7 +59,7 @@ fun AuthScreen(
     var isSubmitting by remember { mutableStateOf(false) }
 
     Surface(
-        color = colors.bgMain,
+        color = colors.bgCanvas,
         modifier = Modifier.fillMaxSize()
     ) {
         Column(
@@ -74,17 +74,17 @@ fun AuthScreen(
             // App Logo Squircle
             Box(
                 modifier = Modifier
-                    .size(68.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(colors.bubbleOutgoing)
-                    .border(1.dp, colors.accent.copy(alpha = 0.3f), RoundedCornerShape(20.dp)),
+                    .size(64.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(colors.accentPrimary)
+                    .border(1.dp, colors.borderSubtle, RoundedCornerShape(14.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "لَمّة",
-                    color = colors.accent,
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.Black
+                    color = colors.textPrimary,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
@@ -92,14 +92,14 @@ fun AuthScreen(
 
             Text(
                 text = "مرحباً بك في لَمّة العائلة",
-                color = colors.accent,
+                color = colors.textPrimary,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.SemiBold
             )
 
             Text(
                 text = "مساحة محادثة خاصة ودافئة تجمعنا كل يوم",
-                color = colors.border,
+                color = colors.textMuted,
                 fontSize = 12.sp,
                 modifier = Modifier.padding(top = 4.dp, bottom = 24.dp)
             )
@@ -107,29 +107,30 @@ fun AuthScreen(
             // Auth Card
             Surface(
                 color = colors.bgSurface,
-                shape = RoundedCornerShape(24.dp),
-                border = BorderStroke(1.dp, colors.border.copy(alpha = 0.35f)),
+                shape = RoundedCornerShape(14.dp),
+                border = BorderStroke(1.dp, colors.borderSubtle),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
                     // Tab Selector
                     TabRow(
                         selectedTabIndex = selectedTab,
-                        containerColor = colors.bgMain,
-                        contentColor = colors.accent,
+                        containerColor = colors.bgCanvas,
+                        contentColor = colors.textPrimary,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(14.dp))
+                            .clip(RoundedCornerShape(10.dp))
+                            .border(1.dp, colors.borderSubtle, RoundedCornerShape(10.dp))
                     ) {
                         Tab(
                             selected = selectedTab == 0,
                             onClick = { selectedTab = 0 },
-                            text = { Text("تسجيل الدخول", fontWeight = FontWeight.Bold, fontSize = 13.sp) }
+                            text = { Text("تسجيل الدخول", fontWeight = FontWeight.Medium, fontSize = 13.sp) }
                         )
                         Tab(
                             selected = selectedTab == 1,
                             onClick = { selectedTab = 1 },
-                            text = { Text("فرد جديد", fontWeight = FontWeight.Bold, fontSize = 13.sp) }
+                            text = { Text("فرد جديد", fontWeight = FontWeight.Medium, fontSize = 13.sp) }
                         )
                     }
 
@@ -139,9 +140,9 @@ fun AuthScreen(
                         // LOGIN TAB
                         Text(
                             text = "اختر اسمك من أفراد العائلة:",
-                            color = colors.accent,
+                            color = colors.textPrimary,
                             fontSize = 12.5.sp,
-                            fontWeight = FontWeight.SemiBold,
+                            fontWeight = FontWeight.Medium,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
 
@@ -158,14 +159,14 @@ fun AuthScreen(
                                     try {
                                         Color(android.graphics.Color.parseColor(member.avatarColor))
                                     } catch (e: Exception) {
-                                        colors.accent
+                                        colors.textPrimary
                                     }
                                 }
 
                                 Surface(
-                                    color = if (isSelected) colors.bubbleOutgoing else colors.bgMain,
-                                    border = BorderStroke(1.dp, if (isSelected) colors.accent else colors.border.copy(alpha = 0.4f)),
-                                    shape = RoundedCornerShape(16.dp),
+                                    color = if (isSelected) colors.accentPrimary else colors.bgCanvas,
+                                    border = BorderStroke(1.dp, if (isSelected) colors.textPrimary.copy(alpha = 0.5f) else colors.borderSubtle),
+                                    shape = RoundedCornerShape(10.dp),
                                     modifier = Modifier.clickable { selectedMember = member }
                                 ) {
                                     Row(
@@ -181,9 +182,9 @@ fun AuthScreen(
                                         )
                                         Text(
                                             text = member.displayName,
-                                            color = colors.accent,
+                                            color = colors.textPrimary,
                                             fontSize = 12.sp,
-                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
                                         )
                                     }
                                 }
@@ -196,27 +197,27 @@ fun AuthScreen(
                             onValueChange = { password = it },
                             label = { Text("كلمة المرور العائلية") },
                             leadingIcon = {
-                                Icon(imageVector = Icons.Default.Lock, contentDescription = null, tint = colors.border)
+                                Icon(imageVector = Icons.Default.Lock, contentDescription = null, tint = colors.textMuted)
                             },
                             trailingIcon = {
                                 IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
                                     Icon(
                                         imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                                         contentDescription = null,
-                                        tint = colors.border
+                                        tint = colors.textMuted
                                     )
                                 }
                             },
                             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = colors.accent,
-                                unfocusedTextColor = colors.accent,
-                                focusedBorderColor = colors.accent,
-                                unfocusedBorderColor = colors.border.copy(alpha = 0.5f),
-                                focusedContainerColor = colors.bgMain,
-                                unfocusedContainerColor = colors.bgMain
+                                focusedTextColor = colors.textPrimary,
+                                unfocusedTextColor = colors.textPrimary,
+                                focusedBorderColor = colors.accentPrimary,
+                                unfocusedBorderColor = colors.borderSubtle,
+                                focusedContainerColor = colors.bgCanvas,
+                                unfocusedContainerColor = colors.bgCanvas
                             ),
-                            shape = RoundedCornerShape(16.dp),
+                            shape = RoundedCornerShape(10.dp),
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -231,13 +232,14 @@ fun AuthScreen(
                                 }
                                 onLoginSuccess(selectedMember!!)
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = colors.bubbleOutgoing),
-                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = colors.accentPrimary),
+                            border = BorderStroke(1.dp, colors.borderSubtle),
+                            shape = RoundedCornerShape(10.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(48.dp)
+                                .height(46.dp)
                         ) {
-                            Text("دخول إلى المحادثة", color = colors.accent, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                            Text("دخول إلى المحادثة", color = colors.textPrimary, fontWeight = FontWeight.Medium, fontSize = 14.sp)
                         }
 
                     } else {
@@ -247,17 +249,17 @@ fun AuthScreen(
                             onValueChange = { newDisplayName = it },
                             label = { Text("الاسم الكريم (مثال: أمين، سارة)") },
                             leadingIcon = {
-                                Icon(imageVector = Icons.Default.Person, contentDescription = null, tint = colors.border)
+                                Icon(imageVector = Icons.Default.Person, contentDescription = null, tint = colors.textMuted)
                             },
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = colors.accent,
-                                unfocusedTextColor = colors.accent,
-                                focusedBorderColor = colors.accent,
-                                unfocusedBorderColor = colors.border.copy(alpha = 0.5f),
-                                focusedContainerColor = colors.bgMain,
-                                unfocusedContainerColor = colors.bgMain
+                                focusedTextColor = colors.textPrimary,
+                                unfocusedTextColor = colors.textPrimary,
+                                focusedBorderColor = colors.accentPrimary,
+                                unfocusedBorderColor = colors.borderSubtle,
+                                focusedContainerColor = colors.bgCanvas,
+                                unfocusedContainerColor = colors.bgCanvas
                             ),
-                            shape = RoundedCornerShape(16.dp),
+                            shape = RoundedCornerShape(10.dp),
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -269,14 +271,14 @@ fun AuthScreen(
                             onValueChange = { newNickname = it },
                             label = { Text("اللقب أو الصفة (مثال: أم العيال، أبو علي)") },
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = colors.accent,
-                                unfocusedTextColor = colors.accent,
-                                focusedBorderColor = colors.accent,
-                                unfocusedBorderColor = colors.border.copy(alpha = 0.5f),
-                                focusedContainerColor = colors.bgMain,
-                                unfocusedContainerColor = colors.bgMain
+                                focusedTextColor = colors.textPrimary,
+                                unfocusedTextColor = colors.textPrimary,
+                                focusedBorderColor = colors.accentPrimary,
+                                unfocusedBorderColor = colors.borderSubtle,
+                                focusedContainerColor = colors.bgCanvas,
+                                unfocusedContainerColor = colors.bgCanvas
                             ),
-                            shape = RoundedCornerShape(16.dp),
+                            shape = RoundedCornerShape(10.dp),
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -285,9 +287,9 @@ fun AuthScreen(
 
                         Text(
                             text = "اختر لونك الخاص:",
-                            color = colors.accent,
+                            color = colors.textPrimary,
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.Medium
                         )
 
                         LazyRow(
@@ -307,7 +309,7 @@ fun AuthScreen(
                                         .background(color)
                                         .border(
                                             width = if (isSelected) 3.dp else 0.dp,
-                                            color = if (isSelected) Color.White else Color.Transparent,
+                                            color = if (isSelected) colors.textPrimary else Color.Transparent,
                                             shape = CircleShape
                                         )
                                         .clickable { selectedColorIndex = index }
@@ -350,16 +352,17 @@ fun AuthScreen(
                                 }
                             },
                             enabled = !isSubmitting,
-                            colors = ButtonDefaults.buttonColors(containerColor = colors.bubbleOutgoing),
-                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = colors.accentPrimary),
+                            border = BorderStroke(1.dp, colors.borderSubtle),
+                            shape = RoundedCornerShape(10.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(48.dp)
+                                .height(46.dp)
                         ) {
                             Text(
                                 text = if (isSubmitting) "جاري الانضمام..." else "انضمام للعائلة",
-                                color = colors.accent,
-                                fontWeight = FontWeight.Bold,
+                                color = colors.textPrimary,
+                                fontWeight = FontWeight.Medium,
                                 fontSize = 14.sp
                             )
                         }

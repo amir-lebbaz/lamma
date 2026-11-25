@@ -9,6 +9,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        canvas: "rgb(var(--canvas-rgb) / <alpha-value>)",
+        surface: "rgb(var(--surface-rgb) / <alpha-value>)",
+        elevated: "rgb(var(--elevated-rgb) / <alpha-value>)",
+        accentPrimary: "rgb(var(--accent-rgb) / <alpha-value>)",
+        textPrimary: "rgb(var(--text-rgb) / <alpha-value>)",
+        textMuted: "var(--text-muted)",
+        borderSubtle: "var(--border-subtle)",
         family: {
           50: "#f6f8f6",
           100: "#eaf1ea",

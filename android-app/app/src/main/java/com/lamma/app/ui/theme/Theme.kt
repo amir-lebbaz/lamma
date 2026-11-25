@@ -15,37 +15,42 @@ enum class LammaTheme(val titleArabic: String, val description: String) {
 
 @Immutable
 data class LammaColors(
-    val bgMain: Color,
+    val bgCanvas: Color,
     val bgSurface: Color,
-    val bubbleOutgoing: Color,
-    val bubbleOutgoingText: Color,
-    val bubbleIncoming: Color,
-    val bubbleIncomingText: Color,
-    val accent: Color,
-    val border: Color,
+    val bgElevated: Color,
+    val accentPrimary: Color,
+    val textPrimary: Color,
+    val textMuted: Color,
+    val borderSubtle: Color,
+    // Backwards-compatible properties
+    val bgMain: Color = bgCanvas,
+    val bubbleOutgoing: Color = accentPrimary,
+    val bubbleOutgoingText: Color = textPrimary,
+    val bubbleIncoming: Color = bgElevated,
+    val bubbleIncomingText: Color = textPrimary,
+    val accent: Color = textPrimary,
+    val border: Color = borderSubtle,
     val isDark: Boolean = true
 )
 
 val SakuraDuskColorPalette = LammaColors(
-    bgMain = SakuraDuskMain,
+    bgCanvas = SakuraDuskCanvas,
     bgSurface = SakuraDuskSurface,
-    bubbleOutgoing = SakuraDuskBubbleOutgoing,
-    bubbleOutgoingText = SakuraDuskBubbleOutgoingText,
-    bubbleIncoming = SakuraDuskBubbleIncoming,
-    bubbleIncomingText = SakuraDuskBubbleIncomingText,
-    accent = SakuraDuskAccent,
-    border = SakuraDuskBorder
+    bgElevated = SakuraDuskElevated,
+    accentPrimary = SakuraDuskAccentPrimary,
+    textPrimary = SakuraDuskTextPrimary,
+    textMuted = SakuraDuskTextMuted,
+    borderSubtle = SakuraDuskBorderSubtle
 )
 
 val VelvetInkColorPalette = LammaColors(
-    bgMain = VelvetInkMain,
+    bgCanvas = VelvetInkCanvas,
     bgSurface = VelvetInkSurface,
-    bubbleOutgoing = VelvetInkBubbleOutgoing,
-    bubbleOutgoingText = VelvetInkBubbleOutgoingText,
-    bubbleIncoming = VelvetInkBubbleIncoming,
-    bubbleIncomingText = VelvetInkBubbleIncomingText,
-    accent = VelvetInkAccent,
-    border = VelvetInkBorder
+    bgElevated = VelvetInkElevated,
+    accentPrimary = VelvetInkAccentPrimary,
+    textPrimary = VelvetInkTextPrimary,
+    textMuted = VelvetInkTextMuted,
+    borderSubtle = VelvetInkBorderSubtle
 )
 
 val LocalLammaColors = staticCompositionLocalOf { SakuraDuskColorPalette }
@@ -65,12 +70,12 @@ fun LammaAppTheme(
     }
 
     val materialColorScheme = darkColorScheme(
-        primary = colors.accent,
-        background = colors.bgMain,
+        primary = colors.accentPrimary,
+        background = colors.bgCanvas,
         surface = colors.bgSurface,
-        onPrimary = colors.bgMain,
-        onBackground = colors.accent,
-        onSurface = colors.accent
+        onPrimary = colors.textPrimary,
+        onBackground = colors.textPrimary,
+        onSurface = colors.textPrimary
     )
 
     CompositionLocalProvider(

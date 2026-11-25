@@ -32,20 +32,20 @@ export default function ChecklistModal({
       onClick={onClose}
     >
       <div
-        className="w-full sm:max-w-md bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-t-3xl sm:rounded-3xl p-4 sm:p-5 shadow-2xl border border-[var(--border)]/60 space-y-3.5 pb-safe animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0"
+        className="w-full sm:max-w-md bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-t-[14px] sm:rounded-[14px] p-4 sm:p-5 border border-[var(--border-subtle)] space-y-3.5 pb-safe animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]/40">
+        <div className="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)]">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-black/30 border border-[var(--border)]/50 flex items-center justify-center text-[var(--accent)]">
+            <div className="w-8 h-8 rounded-[10px] bg-[var(--bg-elevated)]/50 border border-[var(--border-subtle)] flex items-center justify-center text-[var(--text-primary)]">
               <ShoppingCart className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-bold text-sm text-[var(--accent)]">
+              <h3 className="font-semibold text-sm text-[var(--text-primary)]">
                 نواقص البيت العائلية
               </h3>
-              <p className="text-[10px] text-[var(--text-muted)]">
+              <p className="text-[10px] text-[var(--text-muted)] font-normal">
                 قائمة مشتركة ومتزامنة لحظياً بين هواتف وأجهزة الأسرة
               </p>
             </div>
@@ -53,7 +53,7 @@ export default function ChecklistModal({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-[var(--text-muted)] hover:bg-white/10 transition"
+            className="p-1.5 rounded-[10px] text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] transition"
           >
             <X className="w-4 h-4" />
           </button>

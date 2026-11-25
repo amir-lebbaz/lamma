@@ -68,8 +68,8 @@ fun SettingsDialog(
     Dialog(onDismissRequest = onClose) {
         Surface(
             color = colors.bgSurface,
-            shape = RoundedCornerShape(24.dp),
-            border = BorderStroke(1.dp, colors.border.copy(alpha = 0.4f)),
+            shape = RoundedCornerShape(14.dp),
+            border = BorderStroke(1.dp, colors.borderSubtle),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp, horizontal = 8.dp)
@@ -89,26 +89,26 @@ fun SettingsDialog(
                 ) {
                     Text(
                         text = "الإعدادات والمظهر ⚙️",
-                        color = colors.accent,
+                        color = colors.textPrimary,
                         fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold
                     )
                     IconButton(onClick = onClose, modifier = Modifier.size(28.dp)) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "إغلاق",
-                            tint = colors.border
+                            tint = colors.textMuted
                         )
                     }
                 }
 
-                HorizontalDivider(color = colors.border.copy(alpha = 0.3f))
+                HorizontalDivider(color = colors.borderSubtle)
 
                 // Ultra-Lite Low-End Performance Mode ("وضع الهاتف الخفيف / وضع الوالد")
                 Surface(
-                    color = if (isUltraLite) colors.bubbleOutgoing.copy(alpha = 0.6f) else colors.bgMain,
-                    shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(1.dp, if (isUltraLite) colors.accent else colors.border.copy(alpha = 0.4f)),
+                    color = if (isUltraLite) colors.accentPrimary.copy(alpha = 0.4f) else colors.bgCanvas,
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, if (isUltraLite) colors.textPrimary.copy(alpha = 0.5f) else colors.borderSubtle),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -126,19 +126,19 @@ fun SettingsDialog(
                             Icon(
                                 imageVector = Icons.Default.Speed,
                                 contentDescription = null,
-                                tint = colors.accent,
+                                tint = colors.textPrimary,
                                 modifier = Modifier.size(22.dp)
                             )
                             Column {
                                 Text(
                                     text = "وضع الهاتف الخفيف / وضع الوالد ⚡",
-                                    color = colors.accent,
+                                    color = colors.textPrimary,
                                     fontSize = 13.5.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.SemiBold
                                 )
                                 Text(
                                     text = "إيقاف الحركات والظلال، تكبير الأزرار 1.3x لتسريع هواتف 1GB-2GB RAM",
-                                    color = colors.border,
+                                    color = colors.textMuted,
                                     fontSize = 10.sp,
                                     lineHeight = 14.sp
                                 )
@@ -148,10 +148,10 @@ fun SettingsDialog(
                             checked = isUltraLite,
                             onCheckedChange = onToggleUltraLite,
                             colors = SwitchDefaults.colors(
-                                checkedThumbColor = colors.accent,
-                                checkedTrackColor = colors.bubbleOutgoing,
-                                uncheckedThumbColor = colors.border,
-                                uncheckedTrackColor = colors.bgMain
+                                checkedThumbColor = colors.textPrimary,
+                                checkedTrackColor = colors.accentPrimary,
+                                uncheckedThumbColor = colors.textMuted,
+                                uncheckedTrackColor = colors.bgCanvas
                             )
                         )
                     }
@@ -163,8 +163,8 @@ fun SettingsDialog(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        Icon(imageVector = Icons.Default.Palette, contentDescription = null, tint = colors.accent, modifier = Modifier.size(16.dp))
-                        Text(text = "مظهر التطبيق", color = colors.accent, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                        Icon(imageVector = Icons.Default.Palette, contentDescription = null, tint = colors.textPrimary, modifier = Modifier.size(16.dp))
+                        Text(text = "مظهر التطبيق", color = colors.textPrimary, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
                     }
 
                     Row(
@@ -173,9 +173,9 @@ fun SettingsDialog(
                     ) {
                         // Sakura Dusk
                         Surface(
-                            color = if (currentTheme == LammaTheme.SAKURA_DUSK) colors.bubbleOutgoing else colors.bgMain,
-                            shape = RoundedCornerShape(14.dp),
-                            border = BorderStroke(1.dp, if (currentTheme == LammaTheme.SAKURA_DUSK) colors.accent else colors.border.copy(alpha = 0.4f)),
+                            color = if (currentTheme == LammaTheme.SAKURA_DUSK) colors.accentPrimary.copy(alpha = 0.4f) else colors.bgCanvas,
+                            shape = RoundedCornerShape(10.dp),
+                            border = BorderStroke(1.dp, if (currentTheme == LammaTheme.SAKURA_DUSK) colors.textPrimary.copy(alpha = 0.5f) else colors.borderSubtle),
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable { onSelectTheme(LammaTheme.SAKURA_DUSK) }
@@ -186,13 +186,13 @@ fun SettingsDialog(
                             ) {
                                 Text(
                                     text = "🌸 سكون الغسق",
-                                    color = colors.accent,
+                                    color = colors.textPrimary,
                                     fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.SemiBold
                                 )
                                 Text(
                                     text = "الافتراضي الدافئ",
-                                    color = colors.border,
+                                    color = colors.textMuted,
                                     fontSize = 10.sp
                                 )
                             }
@@ -200,9 +200,9 @@ fun SettingsDialog(
 
                         // Velvet Ink
                         Surface(
-                            color = if (currentTheme == LammaTheme.VELVET_INK) colors.bubbleOutgoing else colors.bgMain,
-                            shape = RoundedCornerShape(14.dp),
-                            border = BorderStroke(1.dp, if (currentTheme == LammaTheme.VELVET_INK) colors.accent else colors.border.copy(alpha = 0.4f)),
+                            color = if (currentTheme == LammaTheme.VELVET_INK) colors.accentPrimary.copy(alpha = 0.4f) else colors.bgCanvas,
+                            shape = RoundedCornerShape(10.dp),
+                            border = BorderStroke(1.dp, if (currentTheme == LammaTheme.VELVET_INK) colors.textPrimary.copy(alpha = 0.5f) else colors.borderSubtle),
                             modifier = Modifier
                                 .weight(1f)
                                 .clickable { onSelectTheme(LammaTheme.VELVET_INK) }
@@ -213,13 +213,13 @@ fun SettingsDialog(
                             ) {
                                 Text(
                                     text = "🌙 ليل المخمل",
-                                    color = colors.accent,
+                                    color = colors.textPrimary,
                                     fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.SemiBold
                                 )
                                 Text(
                                     text = "كحلي هادئ فخم",
-                                    color = colors.border,
+                                    color = colors.textMuted,
                                     fontSize = 10.sp
                                 )
                             }
@@ -237,20 +237,20 @@ fun SettingsDialog(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(imageVector = Icons.Default.FormatSize, contentDescription = null, tint = colors.accent, modifier = Modifier.size(18.dp))
+                        Icon(imageVector = Icons.Default.FormatSize, contentDescription = null, tint = colors.textPrimary, modifier = Modifier.size(18.dp))
                         Column {
-                            Text(text = "وضع الخط الكبير", color = colors.accent, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-                            Text(text = "تكبير حجم خط الرسائل بنسبة 1.25x", color = colors.border, fontSize = 10.sp)
+                            Text(text = "وضع الخط الكبير", color = colors.textPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                            Text(text = "تكبير حجم خط الرسائل بنسبة 1.25x", color = colors.textMuted, fontSize = 10.sp)
                         }
                     }
                     Switch(
                         checked = isLargeText,
                         onCheckedChange = onToggleLargeText,
                         colors = SwitchDefaults.colors(
-                            checkedThumbColor = colors.accent,
-                            checkedTrackColor = colors.bubbleOutgoing,
-                            uncheckedThumbColor = colors.border,
-                            uncheckedTrackColor = colors.bgMain
+                            checkedThumbColor = colors.textPrimary,
+                            checkedTrackColor = colors.accentPrimary,
+                            uncheckedThumbColor = colors.textMuted,
+                            uncheckedTrackColor = colors.bgCanvas
                         )
                     )
                 }
@@ -265,29 +265,29 @@ fun SettingsDialog(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(imageVector = Icons.Default.VolumeUp, contentDescription = null, tint = colors.accent, modifier = Modifier.size(18.dp))
+                        Icon(imageVector = Icons.Default.VolumeUp, contentDescription = null, tint = colors.textPrimary, modifier = Modifier.size(18.dp))
                         Column {
-                            Text(text = "نغمة الرسائل الواردة", color = colors.accent, fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
-                            Text(text = "رنين هارموني ناعم وخفيف", color = colors.border, fontSize = 10.sp)
+                            Text(text = "نغمة الرسائل الواردة", color = colors.textPrimary, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                            Text(text = "رنين هارموني ناعم وخفيف", color = colors.textMuted, fontSize = 10.sp)
                         }
                     }
                     Switch(
                         checked = isSoundEnabled,
                         onCheckedChange = onToggleSound,
                         colors = SwitchDefaults.colors(
-                            checkedThumbColor = colors.accent,
-                            checkedTrackColor = colors.bubbleOutgoing,
-                            uncheckedThumbColor = colors.border,
-                            uncheckedTrackColor = colors.bgMain
+                            checkedThumbColor = colors.textPrimary,
+                            checkedTrackColor = colors.accentPrimary,
+                            uncheckedThumbColor = colors.textMuted,
+                            uncheckedTrackColor = colors.bgCanvas
                         )
                     )
                 }
 
                 // Urgent Buzz & DND Onboarding Section
                 Surface(
-                    color = colors.bgMain,
-                    shape = RoundedCornerShape(14.dp),
-                    border = BorderStroke(1.dp, colors.border.copy(alpha = 0.3f)),
+                    color = colors.bgCanvas,
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, colors.borderSubtle),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(
@@ -296,9 +296,9 @@ fun SettingsDialog(
                     ) {
                         Text(
                             text = "صلاحيات النداء العائلي العاجل 🔔",
-                            color = colors.accent,
+                            color = colors.textPrimary,
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.SemiBold
                         )
 
                         // DND Access
@@ -312,10 +312,10 @@ fun SettingsDialog(
                                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Icon(imageVector = Icons.Default.NotificationsActive, contentDescription = null, tint = colors.accent, modifier = Modifier.size(16.dp))
+                                Icon(imageVector = Icons.Default.NotificationsActive, contentDescription = null, tint = colors.textPrimary, modifier = Modifier.size(16.dp))
                                 Text(
                                     text = if (isDndGranted) "الرنين أثناء الصامت مفعّل ✅" else "تجاوز وضع الصامت (DND)",
-                                    color = if (isDndGranted) Color(0xFF81C784) else colors.accent,
+                                    color = if (isDndGranted) Color(0xFF81C784) else colors.textPrimary,
                                     fontSize = 11.sp
                                 )
                             }
@@ -326,9 +326,11 @@ fun SettingsDialog(
                                             context.startActivity(intent)
                                         }
                                     },
+                                    shape = RoundedCornerShape(10.dp),
+                                    border = BorderStroke(1.dp, colors.borderSubtle),
                                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
                                 ) {
-                                    Text("تفعيل", fontSize = 10.sp)
+                                    Text("تفعيل", fontSize = 10.sp, color = colors.textPrimary)
                                 }
                             }
                         }
@@ -344,10 +346,10 @@ fun SettingsDialog(
                                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Icon(imageVector = Icons.Default.BatteryAlert, contentDescription = null, tint = colors.accent, modifier = Modifier.size(16.dp))
+                                Icon(imageVector = Icons.Default.BatteryAlert, contentDescription = null, tint = colors.textPrimary, modifier = Modifier.size(16.dp))
                                 Text(
                                     text = if (isBatteryOptIgnored) "العمل في خلفية السكون مفعّل ✅" else "منع إيقاف التطبيق في السكون",
-                                    color = if (isBatteryOptIgnored) Color(0xFF81C784) else colors.accent,
+                                    color = if (isBatteryOptIgnored) Color(0xFF81C784) else colors.textPrimary,
                                     fontSize = 11.sp
                                 )
                             }
@@ -358,9 +360,11 @@ fun SettingsDialog(
                                             context.startActivity(intent)
                                         }
                                     },
+                                    shape = RoundedCornerShape(10.dp),
+                                    border = BorderStroke(1.dp, colors.borderSubtle),
                                     contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
                                 ) {
-                                    Text("استثناء", fontSize = 10.sp)
+                                    Text("استثناء", fontSize = 10.sp, color = colors.textPrimary)
                                 }
                             }
                         }
@@ -369,9 +373,9 @@ fun SettingsDialog(
 
                 // Clear Local Media Cache (Zero Database Quota Tool)
                 Surface(
-                    color = colors.bgMain,
-                    shape = RoundedCornerShape(14.dp),
-                    border = BorderStroke(1.dp, colors.border.copy(alpha = 0.3f)),
+                    color = colors.bgCanvas,
+                    shape = RoundedCornerShape(10.dp),
+                    border = BorderStroke(1.dp, colors.borderSubtle),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
@@ -393,13 +397,13 @@ fun SettingsDialog(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Icon(imageVector = Icons.Default.Delete, contentDescription = null, tint = colors.border, modifier = Modifier.size(18.dp))
+                            Icon(imageVector = Icons.Default.Delete, contentDescription = null, tint = colors.textMuted, modifier = Modifier.size(18.dp))
                             Column {
-                                Text(text = "مسح كاش الصور المحفوظة", color = colors.accent, fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold)
-                                Text(text = "$cachedCount صورة مخزنة محلياً في هاتفك", color = colors.border, fontSize = 10.sp)
+                                Text(text = "مسح كاش الصور المحفوظة", color = colors.textPrimary, fontSize = 12.5.sp, fontWeight = FontWeight.Medium)
+                                Text(text = "$cachedCount صورة مخزنة محلياً في هاتفك", color = colors.textMuted, fontSize = 10.sp)
                             }
                         }
-                        Text(text = "مسح", color = Color(0xFFF28482), fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(text = "مسح", color = Color(0xFFF28482), fontSize = 11.sp, fontWeight = FontWeight.Medium)
                     }
                 }
 
@@ -409,9 +413,9 @@ fun SettingsDialog(
                         onLogout()
                         onClose()
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = colors.bgMain),
+                    colors = ButtonDefaults.buttonColors(containerColor = colors.bgCanvas),
                     border = BorderStroke(1.dp, Color(0xFFF28482).copy(alpha = 0.5f)),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(imageVector = Icons.Default.ExitToApp, contentDescription = null, tint = Color(0xFFF28482), modifier = Modifier.size(16.dp))

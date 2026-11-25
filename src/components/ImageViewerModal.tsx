@@ -32,7 +32,7 @@ export default function ImageViewerModal({ url, onClose }: ImageViewerModalProps
         <button
           type="button"
           onClick={handleSaveToGallery}
-          className="px-3.5 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white backdrop-blur-md transition active:scale-95 flex items-center gap-1.5 text-xs font-bold shadow-lg"
+          className="px-3.5 py-2 rounded-[10px] bg-[var(--bg-surface)]/90 hover:bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border-subtle)] backdrop-blur-md transition active:scale-95 flex items-center gap-1.5 text-xs font-medium shadow-md"
           title="حفظ في الاستوديو"
         >
           {downloaded ? (
@@ -52,7 +52,7 @@ export default function ImageViewerModal({ url, onClose }: ImageViewerModalProps
         <button
           type="button"
           onClick={onClose}
-          className="p-2.5 rounded-full bg-white/20 text-white hover:bg-white/30 backdrop-blur-md transition active:scale-90 flex items-center justify-center shadow-lg"
+          className="p-2.5 rounded-[10px] bg-[var(--bg-surface)]/90 text-[var(--text-primary)] border border-[var(--border-subtle)] hover:bg-[var(--bg-surface)] backdrop-blur-md transition active:scale-90 flex items-center justify-center shadow-md"
           title="إغلاق"
         >
           <X className="w-5 h-5" />
@@ -61,13 +61,13 @@ export default function ImageViewerModal({ url, onClose }: ImageViewerModalProps
 
       {/* Main Image Container */}
       <div
-        className="max-w-4xl max-h-[85vh] overflow-hidden rounded-2xl flex items-center justify-center"
+        className="max-w-4xl max-h-[85vh] overflow-hidden rounded-[14px] flex items-center justify-center"
         onClick={(e) => e.stopPropagation()}
       >
         <img
           src={url}
           alt="صورة عائلية مكبرة"
-          className="max-w-full max-h-[82vh] object-contain rounded-2xl shadow-2xl"
+          className="max-w-full max-h-[82vh] object-contain rounded-[14px]"
         />
       </div>
     </div>

@@ -1,6 +1,8 @@
 package com.lamma.app.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -31,7 +33,8 @@ fun LammaHeader(
     val colors = LocalLammaColors.current
 
     Surface(
-        color = colors.bgSurface.copy(alpha = 0.92f),
+        color = colors.bgSurface.copy(alpha = 0.95f),
+        border = BorderStroke(1.dp, colors.borderSubtle),
         modifier = modifier.fillMaxWidth()
     ) {
         Row(
@@ -52,23 +55,24 @@ fun LammaHeader(
                     modifier = Modifier
                         .size(38.dp)
                         .clip(CircleShape)
-                        .background(colors.bubbleOutgoing),
+                        .background(colors.accentPrimary)
+                        .border(1.dp, colors.borderSubtle, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "لَمّة",
-                        color = colors.accent,
+                        color = colors.textPrimary,
                         fontSize = 13.sp,
-                        fontWeight = FontWeight.Black
+                        fontWeight = FontWeight.Bold
                     )
                 }
 
                 Column {
                     Text(
                         text = "بيت العائلة",
-                        color = colors.accent,
+                        color = colors.textPrimary,
                         fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -76,13 +80,13 @@ fun LammaHeader(
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(7.dp)
+                                .size(6.dp)
                                 .clip(CircleShape)
-                                .background(colors.accent)
+                                .background(colors.accentPrimary)
                         )
                         Text(
                             text = "$onlineCount متصل الآن",
-                            color = colors.border,
+                            color = colors.textMuted,
                             fontSize = 11.sp
                         )
                     }
@@ -98,7 +102,7 @@ fun LammaHeader(
                     Icon(
                         imageVector = Icons.Default.PushPin,
                         contentDescription = "الملاحظة المثبتة",
-                        tint = if (isNoticeActive) colors.accent else colors.border,
+                        tint = if (isNoticeActive) colors.textPrimary else colors.textMuted,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -107,7 +111,7 @@ fun LammaHeader(
                     Icon(
                         imageVector = Icons.Default.Checklist,
                         contentDescription = "نواقص البيت",
-                        tint = colors.accent,
+                        tint = colors.textPrimary,
                         modifier = Modifier.size(22.dp)
                     )
                 }
@@ -116,7 +120,7 @@ fun LammaHeader(
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "الإعدادات والمظهر",
-                        tint = colors.border,
+                        tint = colors.textMuted,
                         modifier = Modifier.size(20.dp)
                     )
                 }

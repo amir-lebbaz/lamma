@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -54,7 +55,13 @@ fun MessageItem(
     var showReactionMenu by remember { mutableStateOf(false) }
 
     val baseFontSize = if (isLargeText) 17.sp else 14.sp
-    val timestampFontSize = if (isLargeText) 12.sp else 10.sp
+    val timestampFontSize = if (isLargeText) 12.sp else 10.5.sp
+
+    val bubbleShape = if (isMe) {
+        RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 4.dp)
+    } else {
+        RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 4.dp, bottomEnd = 16.dp)
+    }
 
     Box(
         modifier = modifier
@@ -79,7 +86,7 @@ fun MessageItem(
             Icon(
                 imageVector = Icons.Default.Reply,
                 contentDescription = "رد",
-                tint = colors.accent,
+                tint = colors.textPrimary,
                 modifier = Modifier
                     .align(if (isMe) Alignment.CenterStart else Alignment.CenterEnd)
                     .padding(horizontal = 16.dp)
@@ -100,7 +107,7 @@ fun MessageItem(
                     try {
                         Color(android.graphics.Color.parseColor(message.senderColor))
                     } catch (e: Exception) {
-                        colors.accent
+                        colors.textPrimary
                     }
                 }
 
@@ -110,7 +117,7 @@ fun MessageItem(
                         .size(32.dp)
                         .clip(CircleShape)
                         .background(avatarColor.copy(alpha = 0.25f))
-                        .border(1.dp, avatarColor, CircleShape),
+                        .border(1.dp, colors.borderSubtle, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -126,19 +133,11 @@ fun MessageItem(
             Column(
                 modifier = Modifier
                     .widthIn(min = 90.dp, max = 290.dp)
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 16.dp,
-                            topEnd = 16.dp,
-                            bottomStart = if (isMe) 4.dp else 16.dp,
-                            bottomEnd = if (isMe) 16.dp else 4.dp
-                        )
-                    )
-                    .background(if (isMe) colors.bubbleOutgoing else colors.bubbleIncoming)
+                    .clip(bubbleShape)
+                    .background(if (isMe) colors.accentPrimary else colors.bgElevated)
                     .border(
-                        width = 1.dp,
-                        color = if (isMe) colors.bubbleOutgoing.copy(alpha = 0.5f) else colors.border.copy(alpha = 0.35f),
-                        shape = RoundedCornerShape(16.dp)
+                        border = BorderStroke(1.dp, colors.borderSubtle),
+                        shape = bubbleShape
                     )
                     .combinedClickable(
                         onClick = {},
@@ -154,14 +153,14 @@ fun MessageItem(
                     ) {
                         Text(
                             text = message.senderName,
-                            color = colors.accent,
+                            color = colors.textPrimary,
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.SemiBold
                         )
                         if (!message.senderNickname.isNullOrBlank()) {
                             Text(
                                 text = "(${message.senderNickname})",
-                                color = colors.border,
+                                color = colors.textMuted,
                                 fontSize = 10.sp
                             )
                         }
@@ -172,8 +171,9 @@ fun MessageItem(
                 // Reply Quote Preview
                 if (message.replyToText != null) {
                     Surface(
-                        color = colors.bgMain.copy(alpha = 0.5f),
-                        shape = RoundedCornerShape(8.dp),
+                        color = colors.bgCanvas.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(10.dp),
+                        border = BorderStroke(1.dp, colors.borderSubtle),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 6.dp)
@@ -186,24 +186,25 @@ fun MessageItem(
                                 modifier = Modifier
                                     .width(3.dp)
                                     .height(24.dp)
-                                    .background(colors.accent, RoundedCornerShape(2.dp))
+                                    .background(colors.textPrimary, RoundedCornerShape(2.dp))
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Column {
                                 if (message.replyToSender != null) {
                                     Text(
                                         text = message.replyToSender,
-                                        color = colors.accent,
+                                        color = colors.textPrimary,
                                         fontSize = 10.sp,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.SemiBold
                                     )
                                 }
                                 Text(
                                     text = message.replyToText,
-                                    color = colors.border,
+                                    color = colors.textMuted,
                                     fontSize = 11.sp,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = LocalTextStyle.current.copy(textDirection = TextDirection.Content)
                                 )
                             }
                         }
@@ -215,10 +216,10 @@ fun MessageItem(
                     val isStub = message.imageUrl?.startsWith("media-stub:") == true && message.localImageUri == null
 
                     if (isStub) {
-                        // Clean Zero-Quota fallback card
                         Surface(
-                            color = colors.bgMain.copy(alpha = 0.6f),
+                            color = colors.bgCanvas.copy(alpha = 0.6f),
                             shape = RoundedCornerShape(10.dp),
+                            border = BorderStroke(1.dp, colors.borderSubtle),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp)
@@ -231,19 +232,19 @@ fun MessageItem(
                                 Icon(
                                     imageVector = Icons.Default.Image,
                                     contentDescription = null,
-                                    tint = colors.accent,
+                                    tint = colors.textPrimary,
                                     modifier = Modifier.size(22.dp)
                                 )
                                 Column {
                                     Text(
                                         text = "صورة محفوظة على أجهزة العائلة",
-                                        color = colors.accent,
+                                        color = colors.textPrimary,
                                         fontSize = 11.sp,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.SemiBold
                                     )
                                     Text(
                                         text = "مساحة سحابية 0% • محفوظة محلياً",
-                                        color = colors.border,
+                                        color = colors.textMuted,
                                         fontSize = 9.sp
                                     )
                                 }
@@ -267,13 +268,14 @@ fun MessageItem(
                     }
                 }
 
-                // Text Content
+                // Text Content with Dynamic Direction
                 if (!message.content.isNullOrBlank()) {
                     Text(
                         text = message.content,
-                        color = if (isMe) colors.bubbleOutgoingText else colors.bubbleIncomingText,
+                        color = colors.textPrimary,
                         fontSize = baseFontSize,
-                        lineHeight = (baseFontSize.value * 1.35).sp
+                        lineHeight = (baseFontSize.value * 1.35).sp,
+                        style = LocalTextStyle.current.copy(textDirection = TextDirection.Content)
                     )
                 }
 
@@ -288,9 +290,9 @@ fun MessageItem(
                     if (isMe) {
                         Text(
                             text = "أنت",
-                            color = colors.accent.copy(alpha = 0.8f),
+                            color = colors.textMuted,
                             fontSize = 9.5.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Medium
                         )
                     } else {
                         Spacer(modifier = Modifier.width(1.dp))
@@ -302,14 +304,14 @@ fun MessageItem(
                     ) {
                         Text(
                             text = formatMessageTime(message.createdAt),
-                            color = colors.border,
+                            color = colors.textMuted,
                             fontSize = timestampFontSize
                         )
                         if (isMe) {
                             Icon(
                                 imageVector = Icons.Default.DoneAll,
                                 contentDescription = "تم التسليم",
-                                tint = colors.accent,
+                                tint = colors.textPrimary,
                                 modifier = Modifier.size(13.dp)
                             )
                         }
@@ -327,9 +329,9 @@ fun MessageItem(
                         grouped.forEach { (emoji, list) ->
                             val hasMyReaction = list.any { it.userId == currentUserId }
                             Surface(
-                                shape = RoundedCornerShape(12.dp),
-                                color = if (hasMyReaction) colors.accent.copy(alpha = 0.25f) else colors.bgMain.copy(alpha = 0.5f),
-                                border = if (hasMyReaction) BorderStroke(1.dp, colors.accent) else null,
+                                shape = RoundedCornerShape(10.dp),
+                                color = if (hasMyReaction) colors.accentPrimary.copy(alpha = 0.4f) else colors.bgCanvas.copy(alpha = 0.5f),
+                                border = BorderStroke(1.dp, if (hasMyReaction) colors.textPrimary.copy(alpha = 0.4f) else colors.borderSubtle),
                                 modifier = Modifier.combinedClickable(
                                     onClick = { onToggleReaction(message.id, emoji) }
                                 )
@@ -341,7 +343,7 @@ fun MessageItem(
                                 ) {
                                     Text(text = emoji, fontSize = 11.sp)
                                     if (list.size > 1) {
-                                        Text(text = "${list.size}", fontSize = 10.sp, color = colors.accent)
+                                        Text(text = "${list.size}", fontSize = 10.sp, color = colors.textPrimary)
                                     }
                                 }
                             }

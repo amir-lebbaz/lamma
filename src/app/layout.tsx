@@ -40,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" className={cairo.variable}>
-      <body className="min-h-full h-full bg-[#1B0C1A] text-[#FADCD5] font-cairo antialiased selection:bg-[#6D3C52] selection:text-[#FADCD5] overflow-hidden select-none sm:select-auto">
+      <body className="min-h-full h-full bg-[var(--bg-canvas)] text-[var(--text-primary)] font-cairo antialiased selection:bg-[var(--accent-primary)] selection:text-[var(--text-primary)] overflow-hidden select-none sm:select-auto">
         {children}
       </body>
     </html>

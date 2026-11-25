@@ -1,6 +1,7 @@
 package com.lamma.app.ui.components
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -54,14 +55,14 @@ fun ImageViewerDialog(
                     .statusBarsPadding()
                     .padding(16.dp)
                     .size(40.dp)
-                    .clip(CircleShape)
-                    .background(Color.White.copy(alpha = 0.2f))
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(colors.bgSurface.copy(alpha = 0.8f))
                     .align(Alignment.TopEnd)
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "إغلاق",
-                    tint = Color.White
+                    tint = colors.textPrimary
                 )
             }
 
@@ -90,8 +91,9 @@ fun ImageViewerDialog(
                     }
                 },
                 enabled = !isSaving,
-                colors = ButtonDefaults.buttonColors(containerColor = colors.bubbleOutgoing),
-                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = colors.accentPrimary),
+                border = BorderStroke(1.dp, colors.borderSubtle),
+                shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
                     .navigationBarsPadding()
                     .padding(bottom = 24.dp)
@@ -100,13 +102,13 @@ fun ImageViewerDialog(
                 Icon(
                     imageVector = Icons.Default.Download,
                     contentDescription = null,
-                    tint = colors.accent,
+                    tint = colors.textPrimary,
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = if (isSaving) "جاري الحفظ..." else "حفظ في الاستوديو",
-                    color = colors.accent,
+                    color = colors.textPrimary,
                     fontSize = 13.sp
                 )
             }

@@ -175,9 +175,9 @@ fun ChatScreen(
 
             // Special Passive Member: Siamese Cat «زينو» (Zino)
             Surface(
-                color = colors.bgSurface.copy(alpha = 0.5f),
-                shape = RoundedCornerShape(16.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, colors.border.copy(alpha = 0.25f)),
+                color = colors.bgSurface,
+                shape = RoundedCornerShape(10.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, colors.borderSubtle),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 6.dp)
@@ -199,19 +199,19 @@ fun ChatScreen(
                             ) {
                                 Text(
                                     text = "زينو",
-                                    color = colors.accent,
+                                    color = colors.textPrimary,
                                     fontSize = 12.sp,
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
                                 )
                                 Text(
                                     text = "قط العائلة 🐾",
-                                    color = colors.border,
+                                    color = colors.textMuted,
                                     fontSize = 10.sp
                                 )
                             }
                             Text(
                                 text = "يراقب المحادثة بهدوء 👀",
-                                color = colors.border.copy(alpha = 0.8f),
+                                color = colors.textMuted,
                                 fontSize = 10.sp
                             )
                         }
@@ -219,7 +219,7 @@ fun ChatScreen(
 
                     Text(
                         text = "عضو شرفي 🐈",
-                        color = colors.accent.copy(alpha = 0.7f),
+                        color = colors.textMuted,
                         fontSize = 10.5.sp
                     )
                 }

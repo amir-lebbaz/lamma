@@ -40,9 +40,9 @@ export default function Header({
 
   return (
     <header
-      className={`sticky top-0 z-30 px-3.5 py-2.5 transition-all select-none border-b shadow-2xs ${
+      className={`sticky top-0 z-30 px-4 py-2.5 transition-all select-none border-b ${
         headerClass ||
-        'bg-[var(--bg-surface)]/85 backdrop-blur-md border-[var(--border)]/40 text-[var(--text-primary)]'
+        'bg-[var(--bg-surface)]/90 backdrop-blur-md border-[var(--border-subtle)] text-[var(--text-primary)]'
       }`}
     >
       <div className="max-w-3xl lg:max-w-4xl mx-auto flex items-center justify-between gap-2.5">
@@ -52,7 +52,7 @@ export default function Header({
           <button
             type="button"
             onClick={onOpenSettings}
-            className="w-9 h-9 rounded-xl flex-shrink-0 overflow-hidden flex items-center justify-center text-[#1B0C1A] font-bold text-xs shadow-2xs active:scale-95 transition ring-2 ring-white/20"
+            className="w-9 h-9 rounded-full flex-shrink-0 overflow-hidden flex items-center justify-center text-[#1B0C1A] font-bold text-xs active:scale-95 transition ring-1 ring-[var(--border-subtle)]"
             style={{ backgroundColor: currentMember.avatar_color }}
             title="إعدادات الحساب والمظهر"
           >
@@ -69,11 +69,11 @@ export default function Header({
 
           <div className="min-w-0">
             <div className="flex items-center gap-1.5 leading-none mb-1">
-              <h1 className="font-bold text-sm sm:text-base text-[var(--text-primary)] truncate">
+              <h1 className="font-semibold text-sm sm:text-base text-[var(--text-primary)] truncate">
                 {room.name || 'لَمّة العائلة'}
               </h1>
               {currentMember.nickname && (
-                <span className="text-[11px] text-[var(--text-muted)] truncate font-medium">
+                <span className="text-[11px] text-[var(--text-muted)] truncate font-normal">
                   ({currentMember.nickname})
                 </span>
               )}
@@ -81,19 +81,19 @@ export default function Header({
 
             {/* Live Typing or Online Count */}
             {typingUser ? (
-              <div className="flex items-center gap-1.5 text-[11px] text-[var(--accent)] font-bold animate-pulse">
+              <div className="flex items-center gap-1.5 text-[11px] text-[var(--text-primary)] font-medium animate-pulse">
                 <span>✍️ {typingUser} يكتب الآن...</span>
               </div>
             ) : (
               <button
                 type="button"
                 onClick={onOpenMembers}
-                className="flex items-center gap-1.5 text-[11px] text-[var(--accent)] hover:underline"
+                className="flex items-center gap-1.5 text-[11px] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
               >
-                <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse"></span>
-                <span className="font-semibold">{onlineCount} متصل الآن</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)]"></span>
+                <span className="font-medium text-[var(--text-primary)]">{onlineCount} متصل</span>
                 {offlineCount > 0 && (
-                  <span className="text-[var(--text-muted)] font-normal">
+                  <span className="hidden sm:inline text-[var(--text-muted)] font-normal">
                     • {offlineCount} غير متصل
                   </span>
                 )}
@@ -103,36 +103,36 @@ export default function Header({
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-1">
-          {/* Download App APK Link */}
+        <div className="flex items-center gap-1 sm:gap-1.5">
+          {/* Download App APK Link (Desktop/Tablet) */}
           <a
             href="/lamma.apk"
             download="lamma.apk"
-            className="px-2.5 py-1.5 rounded-xl text-[var(--accent)] hover:bg-white/10 border border-transparent hover:border-[var(--border)]/40 transition active:scale-90 flex items-center gap-1.5 text-[11px] font-bold shadow-2xs"
+            className="hidden sm:flex px-2.5 py-1.5 rounded-[10px] text-[var(--text-primary)] hover:bg-white/5 border border-[var(--border-subtle)] transition active:scale-95 items-center gap-1.5 text-[11px] font-medium"
             title="تحميل تطبيق لَمّة للهاتف (APK أندرويد)"
           >
-            <Download className="w-3.5 h-3.5 text-[var(--accent)]" />
-            <span className="hidden sm:inline">التطبيق</span>
+            <Download className="w-3.5 h-3.5 text-[var(--text-primary)]" />
+            <span>التطبيق</span>
           </a>
 
           {/* Pinned Notice Button */}
           <button
             type="button"
             onClick={onToggleNotice}
-            className={`relative p-2 rounded-xl text-xs flex items-center gap-1 transition active:scale-90 ${
+            className={`relative p-2 rounded-[10px] text-xs flex items-center gap-1 transition active:scale-95 border ${
               isNoticeOpen
-                ? 'bg-[var(--bubble-outgoing)] text-[var(--accent)] border border-[var(--border)]'
+                ? 'bg-[var(--accent-primary)] text-[var(--text-primary)] border-[var(--border-subtle)]'
                 : isNoticePinned
-                ? 'bg-black/30 text-[var(--accent)] border border-[var(--border)]/50'
-                : 'text-[var(--text-muted)] hover:bg-white/10'
+                ? 'bg-[var(--bg-elevated)] text-[var(--text-primary)] border-[var(--border-subtle)]'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 border-transparent'
             }`}
             title="التنبيه العائلي"
           >
             <Pin
-              className={`w-4 h-4 ${isNoticePinned ? 'fill-current text-[var(--accent)]' : ''}`}
+              className={`w-4 h-4 ${isNoticePinned ? 'fill-current text-[var(--text-primary)]' : ''}`}
             />
             {isNoticePinned && !isNoticeOpen && (
-              <span className="w-2 h-2 rounded-full bg-[var(--accent)] absolute top-1 right-1 animate-ping"></span>
+              <span className="w-2 h-2 rounded-full bg-[var(--text-primary)] absolute top-1 right-1 animate-ping"></span>
             )}
           </button>
 
@@ -141,12 +141,12 @@ export default function Header({
             <button
               type="button"
               onClick={onOpenChecklist}
-              className="relative p-2 rounded-xl text-[var(--text-muted)] hover:bg-white/10 hover:text-[var(--text-primary)] transition active:scale-90"
+              className="relative p-2 rounded-[10px] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 border border-transparent hover:border-[var(--border-subtle)] transition active:scale-95"
               title="نواقص البيت"
             >
               <ShoppingCart className="w-4 h-4" />
               {pendingChecklistCount !== undefined && pendingChecklistCount > 0 && (
-                <span className="absolute -top-1 -right-1 px-1.5 py-0.2 rounded-full bg-[var(--bubble-outgoing)] text-[var(--accent)] text-[9px] font-bold border border-[var(--border)]">
+                <span className="absolute -top-1 -right-1 px-1.5 py-0.2 rounded-full bg-[var(--accent-primary)] text-[var(--text-primary)] text-[9px] font-bold border border-[var(--border-subtle)]">
                   {pendingChecklistCount}
                 </span>
               )}
@@ -157,7 +157,7 @@ export default function Header({
           <button
             type="button"
             onClick={onOpenMembers}
-            className="p-2 rounded-xl text-[var(--text-muted)] hover:bg-white/10 hover:text-[var(--text-primary)] transition active:scale-90"
+            className="p-2 rounded-[10px] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 border border-transparent hover:border-[var(--border-subtle)] transition active:scale-95"
             title="أفراد العائلة"
           >
             <Users className="w-4 h-4" />
@@ -167,7 +167,7 @@ export default function Header({
           <button
             type="button"
             onClick={onOpenSettings}
-            className="p-2 rounded-xl text-[var(--text-muted)] hover:bg-white/10 hover:text-[var(--text-primary)] transition active:scale-90"
+            className="p-2 rounded-[10px] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 border border-transparent hover:border-[var(--border-subtle)] transition active:scale-95"
             title="إعدادات الحساب والمظهر"
           >
             <Settings className="w-4 h-4" />

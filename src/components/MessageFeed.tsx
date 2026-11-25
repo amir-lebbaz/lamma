@@ -73,13 +73,13 @@ export default function MessageFeed({
       <div className="max-w-3xl lg:max-w-4xl mx-auto flex flex-col min-h-full justify-end">
         {messages.length === 0 ? (
           <div className="my-auto text-center py-12 px-4 select-none">
-            <div className="w-16 h-16 mx-auto mb-3 rounded-2xl bg-[var(--bg-surface)] text-[var(--accent)] flex items-center justify-center text-3xl font-bold shadow-md border border-[var(--border)]/40">
+            <div className="w-16 h-16 mx-auto mb-3 rounded-[14px] bg-[var(--bg-surface)] text-[var(--text-primary)] flex items-center justify-center text-3xl font-bold border border-[var(--border-subtle)]">
               🏡
             </div>
-            <h3 className="text-base font-bold text-[var(--text-primary)] mb-1">
+            <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">
               مجلس «لَمّة» العائلي
             </h3>
-            <p className="text-xs text-[var(--text-muted)] max-w-sm mx-auto leading-relaxed">
+            <p className="text-xs text-[var(--text-muted)] max-w-sm mx-auto leading-relaxed font-normal">
               لا توجد رسائل سابقة بعد. ألقِ السلام وشارك أفراد أسرتك اليوم!
             </p>
           </div>
@@ -88,7 +88,7 @@ export default function MessageFeed({
             <div key={groupIdx} className="w-full">
               {/* Date Header: Centered Cleanly (Pill design) */}
               <div className="sticky top-2 z-10 flex items-center justify-center my-3 select-none pointer-events-none">
-                <span className="date-pill pointer-events-auto px-3.5 py-1 rounded-full bg-[var(--bg-surface)]/85 backdrop-blur-md text-[var(--text-primary)] text-[11px] font-bold shadow-xs border border-[var(--border)]/50 transition-all">
+                <span className="date-pill pointer-events-auto px-3.5 py-1 rounded-full bg-[var(--bg-surface)]/90 backdrop-blur-md text-[var(--text-primary)] text-[11px] font-medium border border-[var(--border-subtle)] transition-all">
                   {group.date}
                 </span>
               </div>
@@ -119,10 +119,10 @@ export default function MessageFeed({
         <button
           type="button"
           onClick={() => scrollToBottom('smooth')}
-          className="fixed bottom-20 left-4 sm:left-8 z-20 px-3 py-1.5 rounded-full bg-[var(--bg-surface)]/95 backdrop-blur-md text-[var(--text-primary)] border border-[var(--border)] shadow-lg hover:bg-[var(--bg-surface)] active:scale-95 transition-all flex items-center gap-1.5 text-xs font-bold"
+          className="fixed bottom-20 left-4 sm:left-8 z-20 px-3 py-1.5 rounded-full bg-[var(--bg-surface)]/95 backdrop-blur-md text-[var(--text-primary)] border border-[var(--border-subtle)] shadow-md hover:bg-[var(--bg-surface)] active:scale-95 transition-all flex items-center gap-1.5 text-xs font-medium"
           title="أحدث الرسائل"
         >
-          <ArrowDown className="w-3.5 h-3.5 text-[var(--accent)]" />
+          <ArrowDown className="w-3.5 h-3.5 text-[var(--text-primary)]" />
           <span>أحدث الرسائل</span>
         </button>
       )}

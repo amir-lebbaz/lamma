@@ -176,18 +176,18 @@ export default function SettingsModal({
       onClick={onClose}
     >
       <div
-        className="w-full sm:max-w-md bg-[#251824] text-[#FADCD5] rounded-t-3xl sm:rounded-3xl p-4 sm:p-6 shadow-2xl border border-[#765D67]/40 space-y-4 max-h-[90vh] overflow-y-auto pb-safe animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 smooth-scroll"
+        className="w-full sm:max-w-md bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-t-[14px] sm:rounded-[14px] p-4 sm:p-6 border border-[var(--border-subtle)] space-y-4 max-h-[90vh] overflow-y-auto pb-safe animate-in slide-in-from-bottom-4 sm:slide-in-from-bottom-0 smooth-scroll"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-[#765D67]/30">
-          <h2 className="font-bold text-base text-[#FADCD5] flex items-center gap-2">
+        <div className="flex items-center justify-between pb-3 border-b border-[var(--border-subtle)]">
+          <h2 className="font-semibold text-base text-[var(--text-primary)] flex items-center gap-2">
             <span>إعدادات «لَمّة» والمظهر</span>
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-[#B5B9BC] hover:bg-[#342433] transition"
+            className="p-1.5 rounded-[10px] text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -195,7 +195,7 @@ export default function SettingsModal({
 
         <form onSubmit={handleSave} className="space-y-4">
           {/* 1. Avatar Photo & Color */}
-          <div className="flex flex-col items-center justify-center py-2 bg-[#2D1F2C] rounded-2xl border border-[#765D67]/30 p-4">
+          <div className="flex flex-col items-center justify-center py-2 bg-[var(--bg-elevated)]/30 rounded-[14px] border border-[var(--border-subtle)] p-4">
             <input
               ref={avatarInputRef}
               type="file"
@@ -206,7 +206,7 @@ export default function SettingsModal({
 
             <div className="relative mb-2.5">
               <div
-                className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center text-white text-2xl font-bold shadow-md border-2 border-white/20"
+                className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center text-white text-2xl font-bold border border-[var(--border-subtle)]"
                 style={{ backgroundColor: avatarColor }}
               >
                 {avatarUrl ? (
@@ -230,7 +230,7 @@ export default function SettingsModal({
               <button
                 type="button"
                 onClick={() => avatarInputRef.current?.click()}
-                className="absolute bottom-0 right-0 p-2 rounded-full bg-[#6D3C52] text-[#FADCD5] shadow-md hover:bg-[#854B65] active:scale-90 transition border border-[#765D67]/50"
+                className="absolute bottom-0 right-0 p-2 rounded-full bg-[var(--accent-primary)] text-[var(--text-primary)] hover:opacity-90 active:scale-90 transition border border-[var(--border-subtle)]"
                 title="تغيير صورة البروفايل"
               >
                 <Camera className="w-4 h-4" />
@@ -241,13 +241,13 @@ export default function SettingsModal({
               <button
                 type="button"
                 onClick={() => avatarInputRef.current?.click()}
-                className="text-[#FADCD5] font-semibold hover:underline"
+                className="text-[var(--text-primary)] font-medium hover:underline"
               >
                 {avatarUrl ? 'تغيير الصورة' : 'إضافة صورة بروفايل'}
               </button>
               {avatarUrl && (
                 <>
-                  <span className="text-[#765D67]">•</span>
+                  <span className="text-[var(--text-muted)]">•</span>
                   <button
                     type="button"
                     onClick={() => setAvatarUrl(null)}
@@ -261,7 +261,7 @@ export default function SettingsModal({
 
             {/* 8 Avatar Color Swatches */}
             <div className="mt-3 w-full">
-              <span className="block text-[11px] font-bold text-[#B5B9BC] mb-2 text-center">
+              <span className="block text-[11px] font-medium text-[var(--text-muted)] mb-2 text-center">
                 الألوان الرمزية الحصرية (8 ألوان)
               </span>
               <div className="flex items-center justify-center gap-2 flex-wrap">
@@ -277,7 +277,7 @@ export default function SettingsModal({
                       style={{ backgroundColor: color }}
                       className={`w-7 h-7 rounded-full transition-transform flex items-center justify-center text-[#1B0C1A] font-bold ${
                         isSelected
-                          ? 'scale-120 ring-2 ring-offset-2 ring-offset-[#2D1F2C] ring-[#FADCD5] shadow-xs'
+                          ? 'scale-115 ring-2 ring-offset-2 ring-offset-[var(--bg-surface)] ring-[var(--text-primary)]'
                           : 'opacity-85 hover:opacity-100 hover:scale-105'
                       }`}
                     >
@@ -292,7 +292,7 @@ export default function SettingsModal({
           {/* 2. Name & Nickname */}
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-bold text-[#FADCD5] mb-1">
+              <label className="block text-xs font-semibold text-[var(--text-primary)] mb-1">
                 الاسم
               </label>
               <input
@@ -301,16 +301,16 @@ export default function SettingsModal({
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="مثال: أحمد"
                 maxLength={25}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#2D1F2C] border border-[#765D67]/40 text-[#FADCD5] placeholder-[#765D67] text-sm focus:outline-none focus:ring-2 focus:ring-[#6D3C52] transition"
+                className="w-full px-3.5 py-2.5 rounded-[10px] bg-[var(--bg-canvas)] border border-[var(--border-subtle)] text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)] transition"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-bold text-[#FADCD5]">
+                <label className="text-xs font-semibold text-[var(--text-primary)]">
                   الكنية أو اللقب (اختياري)
                 </label>
-                <span className="text-[10px] text-[#765D67]">
+                <span className="text-[10px] text-[var(--text-muted)]">
                   تظهر بجانب اسمك
                 </span>
               </div>
@@ -320,16 +320,16 @@ export default function SettingsModal({
                 onChange={(e) => setNickname(e.target.value)}
                 placeholder="مثال: أبو شهاب، أم محمد، الغالي..."
                 maxLength={25}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#2D1F2C] border border-[#765D67]/40 text-[#FADCD5] placeholder-[#765D67] text-sm focus:outline-none focus:ring-2 focus:ring-[#6D3C52] transition"
+                className="w-full px-3.5 py-2.5 rounded-[10px] bg-[var(--bg-canvas)] border border-[var(--border-subtle)] text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)] transition"
               />
             </div>
           </div>
 
           {/* 3. Exclusive 2 Themes System */}
-          <div className="pt-2 border-t border-[#765D67]/30 space-y-2">
+          <div className="pt-2 border-t border-[var(--border-subtle)] space-y-2">
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-bold text-[#FADCD5] flex items-center gap-1.5">
-                <Palette className="w-4 h-4 text-[#FADCD5]" />
+              <label className="text-xs font-semibold text-[var(--text-primary)] flex items-center gap-1.5">
+                <Palette className="w-4 h-4 text-[var(--text-primary)]" />
                 <span>سمات «لَمّة» الحصرية (نظام الثيمين)</span>
               </label>
               {customBackgroundUrl && (
@@ -362,29 +362,29 @@ export default function SettingsModal({
                       onSetCustomBackground(null);
                       onSelectTheme(theme.id);
                     }}
-                    className={`flex flex-col items-start p-3 rounded-2xl border transition-all text-right ${
+                    className={`flex flex-col items-start p-3 rounded-[10px] border transition-all text-right ${
                       isSelected
-                        ? 'border-[#FADCD5] bg-[#3A2234] shadow-md ring-2 ring-[#FADCD5]/40'
-                        : 'border-[#765D67]/30 bg-[#2D1F2C] hover:bg-[#342433]'
+                        ? 'border-[var(--text-primary)]/50 bg-[var(--accent-primary)]/30 ring-1 ring-[var(--text-primary)]/30'
+                        : 'border-[var(--border-subtle)] bg-[var(--bg-canvas)] hover:bg-[var(--bg-elevated)]/40'
                     }`}
                   >
                     <div className="w-full flex items-center justify-between mb-2">
                       <div
-                        className="w-6 h-6 rounded-full border border-white/20 shadow-xs flex items-center justify-center"
+                        className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center"
                         style={{ backgroundColor: theme.colorPreview }}
                       >
                         {isSelected && (
-                          <Check className="w-3.5 h-3.5 text-[#FADCD5] stroke-[3]" />
+                          <Check className="w-3.5 h-3.5 text-[var(--text-primary)] stroke-[3]" />
                         )}
                       </div>
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-black/25 text-[#FADCD5]">
+                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-[var(--bg-surface)] text-[var(--text-muted)] border border-[var(--border-subtle)]">
                         {theme.id === 'sakura-dusk' ? 'الافتراضي' : 'ليلي فخم'}
                       </span>
                     </div>
-                    <span className="font-bold text-xs text-[#FADCD5] mb-0.5">
+                    <span className="font-semibold text-xs text-[var(--text-primary)] mb-0.5">
                       {theme.name}
                     </span>
-                    <span className="text-[10px] text-[#765D67] line-clamp-1">
+                    <span className="text-[10px] text-[var(--text-muted)] line-clamp-1">
                       {theme.description}
                     </span>
                   </button>
@@ -403,9 +403,9 @@ export default function SettingsModal({
             <button
               type="button"
               onClick={() => bgInputRef.current?.click()}
-              className="w-full py-2 px-3 rounded-xl border border-dashed border-[#765D67]/40 bg-[#2D1F2C] hover:bg-[#342433] text-xs font-semibold text-[#B5B9BC] transition flex items-center justify-center gap-1.5"
+              className="w-full py-2 px-3 rounded-[10px] border border-dashed border-[var(--border-subtle)] bg-[var(--bg-canvas)] hover:bg-[var(--bg-elevated)]/40 text-xs font-medium text-[var(--text-muted)] transition flex items-center justify-center gap-1.5"
             >
-              <ImageIcon className="w-3.5 h-3.5 text-[#FADCD5]" />
+              <ImageIcon className="w-3.5 h-3.5 text-[var(--text-primary)]" />
               <span>
                 {customBackgroundUrl
                   ? 'تغيير صورة الخلفية المخصصة'
@@ -415,16 +415,16 @@ export default function SettingsModal({
           </div>
 
           {/* 4. Large Text Mode (وضع الخط الكبير) */}
-          <div className="p-3 rounded-2xl bg-[#2D1F2C] border border-[#765D67]/30 flex items-center justify-between">
+          <div className="p-3 rounded-[10px] bg-[var(--bg-elevated)]/30 border border-[var(--border-subtle)] flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#6D3C52] text-[#FADCD5] flex items-center justify-center flex-shrink-0 shadow-2xs">
+              <div className="w-8 h-8 rounded-[10px] bg-[var(--accent-primary)] text-[var(--text-primary)] flex items-center justify-center flex-shrink-0 border border-[var(--border-subtle)]">
                 <Type className="w-4 h-4" />
               </div>
               <div>
-                <div className="text-xs font-bold text-[#FADCD5]">
+                <div className="text-xs font-semibold text-[var(--text-primary)]">
                   وضع الخط الكبير
                 </div>
-                <div className="text-[10px] text-[#765D67]">
+                <div className="text-[10px] text-[var(--text-muted)]">
                   تكبير نصوص المحادثة لقراءة أسهل ومريحة للعين
                 </div>
               </div>
@@ -434,18 +434,18 @@ export default function SettingsModal({
               onClick={toggleLargeText}
               className={`w-11 h-6 rounded-full transition-colors p-0.5 flex items-center ${
                 largeTextMode
-                  ? 'bg-[#6D3C52] justify-start'
-                  : 'bg-[#4B3B48] justify-end'
+                  ? 'bg-[var(--accent-primary)] justify-start'
+                  : 'bg-[var(--bg-canvas)] justify-end'
               }`}
             >
-              <div className="w-5 h-5 rounded-full bg-[#FADCD5] shadow-2xs" />
+              <div className="w-5 h-5 rounded-full bg-[var(--text-primary)]" />
             </button>
           </div>
 
           {/* 5. Sound Notification Toggle */}
-          <div className="p-3 rounded-2xl bg-[#2D1F2C] border border-[#765D67]/30 flex items-center justify-between">
+          <div className="p-3 rounded-[10px] bg-[var(--bg-elevated)]/30 border border-[var(--border-subtle)] flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#6D3C52] text-[#FADCD5] flex items-center justify-center flex-shrink-0 shadow-2xs">
+              <div className="w-8 h-8 rounded-[10px] bg-[var(--accent-primary)] text-[var(--text-primary)] flex items-center justify-center flex-shrink-0 border border-[var(--border-subtle)]">
                 {soundEnabled ? (
                   <Bell className="w-4 h-4" />
                 ) : (
@@ -453,10 +453,10 @@ export default function SettingsModal({
                 )}
               </div>
               <div>
-                <div className="text-xs font-bold text-[#FADCD5]">
+                <div className="text-xs font-semibold text-[var(--text-primary)]">
                   نغمة التنبيه
                 </div>
-                <div className="text-[10px] text-[#765D67]">
+                <div className="text-[10px] text-[var(--text-muted)]">
                   تشغيل رنين هادئ عند وصول رسائل جديدة
                 </div>
               </div>
@@ -466,25 +466,25 @@ export default function SettingsModal({
               onClick={toggleSound}
               className={`w-11 h-6 rounded-full transition-colors p-0.5 flex items-center ${
                 soundEnabled
-                  ? 'bg-[#6D3C52] justify-start'
-                  : 'bg-[#4B3B48] justify-end'
+                  ? 'bg-[var(--accent-primary)] justify-start'
+                  : 'bg-[var(--bg-canvas)] justify-end'
               }`}
             >
-              <div className="w-5 h-5 rounded-full bg-[#FADCD5] shadow-2xs" />
+              <div className="w-5 h-5 rounded-full bg-[var(--text-primary)]" />
             </button>
           </div>
 
           {/* 6. Mobile App Download Card */}
-          <div className="p-3 rounded-2xl bg-gradient-to-r from-[#342433] to-[#2D1F2C] border border-[#765D67]/40 flex items-center justify-between gap-2 shadow-2xs">
+          <div className="p-3 rounded-[10px] bg-[var(--bg-elevated)]/40 border border-[var(--border-subtle)] flex items-center justify-between gap-2">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-[#6D3C52] text-[#FADCD5] flex items-center justify-center flex-shrink-0 shadow-2xs">
+              <div className="w-8 h-8 rounded-[10px] bg-[var(--accent-primary)] text-[var(--text-primary)] flex items-center justify-center flex-shrink-0 border border-[var(--border-subtle)]">
                 <Smartphone className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <div className="text-xs font-bold text-[#FADCD5] truncate">
+                <div className="text-xs font-semibold text-[var(--text-primary)] truncate">
                   تطبيق أندرويد للهاتف (APK)
                 </div>
-                <div className="text-[10px] text-[#765D67] truncate">
+                <div className="text-[10px] text-[var(--text-muted)] truncate">
                   تطبيق أصلي وسريع للهواتف
                 </div>
               </div>
@@ -492,7 +492,7 @@ export default function SettingsModal({
             <a
               href="/lamma.apk"
               download="lamma.apk"
-              className="px-3 py-1.5 rounded-xl bg-[#6D3C52] hover:bg-[#854B65] text-[#FADCD5] text-xs font-bold shadow-2xs flex items-center gap-1.5 transition active:scale-95 flex-shrink-0"
+              className="px-3 py-1.5 rounded-[10px] bg-[var(--accent-primary)] hover:opacity-90 text-[var(--text-primary)] text-xs font-medium flex items-center gap-1.5 transition active:scale-95 flex-shrink-0 border border-[var(--border-subtle)]"
             >
               <Download className="w-3.5 h-3.5" />
               <span>تحميل</span>
@@ -500,16 +500,16 @@ export default function SettingsModal({
           </div>
 
           {/* 7. Clear Local Media Cache (مسح الصور المحفوظة محلياً) */}
-          <div className="p-3 rounded-2xl bg-[#2D1F2C] border border-[#765D67]/30 flex items-center justify-between gap-2 shadow-2xs">
+          <div className="p-3 rounded-[10px] bg-[var(--bg-elevated)]/30 border border-[var(--border-subtle)] flex items-center justify-between gap-2">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-xl bg-[#6D3C52] text-[#FADCD5] flex items-center justify-center flex-shrink-0 shadow-2xs">
+              <div className="w-8 h-8 rounded-[10px] bg-[var(--accent-primary)] text-[var(--text-primary)] flex items-center justify-center flex-shrink-0 border border-[var(--border-subtle)]">
                 <HardDrive className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <div className="text-xs font-bold text-[#FADCD5] truncate">
+                <div className="text-xs font-semibold text-[var(--text-primary)] truncate">
                   مسح الصور المحفوظة محلياً
                 </div>
-                <div className="text-[10px] text-[#765D67] truncate">
+                <div className="text-[10px] text-[var(--text-muted)] truncate">
                   {cacheFeedback || `تفريغ ذاكرة الصور (${cachedMediaCount} صورة مخزنة)`}
                 </div>
               </div>
@@ -517,7 +517,7 @@ export default function SettingsModal({
             <button
               type="button"
               onClick={handleClearCache}
-              className="px-2.5 py-1.5 rounded-xl border border-[#F28482]/40 bg-[#F28482]/10 hover:bg-[#F28482]/20 text-[#F28482] text-xs font-bold transition active:scale-95 flex-shrink-0"
+              className="px-2.5 py-1.5 rounded-[10px] border border-[#F28482]/40 bg-[#F28482]/10 hover:bg-[#F28482]/20 text-[#F28482] text-xs font-medium transition active:scale-95 flex-shrink-0"
               title="مسح ذاكرة الصور المؤقتة"
             >
               مسح الصور
@@ -525,7 +525,7 @@ export default function SettingsModal({
           </div>
 
           {error && (
-            <div className="p-2.5 bg-[#4B2138] border border-[#F28482]/40 rounded-xl text-xs text-[#F28482] text-center font-bold">
+            <div className="p-2.5 bg-[#4B2138] border border-[#F28482]/40 rounded-[10px] text-xs text-[#F28482] text-center font-medium">
               {error}
             </div>
           )}
@@ -535,14 +535,14 @@ export default function SettingsModal({
             <button
               type="button"
               onClick={onClose}
-              className="w-1/3 py-2.5 px-3 rounded-2xl border border-[#765D67]/40 text-xs font-bold text-[#B5B9BC] hover:bg-[#342433] transition"
+              className="w-1/3 py-2.5 px-3 rounded-[10px] border border-[var(--border-subtle)] text-xs font-medium text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] transition"
             >
               إلغاء
             </button>
             <button
               type="submit"
               disabled={isSaving}
-              className="w-2/3 py-2.5 px-4 rounded-2xl bg-[#6D3C52] hover:bg-[#854B65] text-[#FADCD5] text-xs font-bold shadow-xs transition active:scale-95 disabled:opacity-50"
+              className="w-2/3 py-2.5 px-4 rounded-[10px] bg-[var(--accent-primary)] hover:opacity-90 text-[var(--text-primary)] text-xs font-medium border border-[var(--border-subtle)] transition active:scale-95 disabled:opacity-50"
             >
               {isSaving ? 'جارِ الحفظ...' : 'حفظ التغييرات'}
             </button>
@@ -550,15 +550,15 @@ export default function SettingsModal({
         </form>
 
         {/* Switch User / Logout link */}
-        <div className="pt-2 border-t border-[#765D67]/30 flex items-center justify-between text-xs">
-          <span className="text-[#765D67]">تسجيل الدخول باسم آخر؟</span>
+        <div className="pt-2 border-t border-[var(--border-subtle)] flex items-center justify-between text-xs">
+          <span className="text-[var(--text-muted)]">تسجيل الدخول باسم آخر؟</span>
           <button
             type="button"
             onClick={() => {
               onClose();
               onSwitchUser();
             }}
-            className="text-[#F28482] font-bold hover:underline flex items-center gap-1"
+            className="text-[#F28482] font-medium hover:underline flex items-center gap-1"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>تبديل الحساب</span>
