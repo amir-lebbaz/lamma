@@ -1,5 +1,8 @@
 # ProGuard & R8 Optimization Rules for Lamma Native Android App
 
+-dontwarn **
+-ignorewarnings
+
 # Keep Kotlin Serialization models
 -keepattributes *Annotation*, InnerClasses, EnclosingMethod
 -keepclassmembers class * {
@@ -8,7 +11,7 @@
 -keepclassmembers class * extends kotlinx.serialization.internal.GeneratedSerializer {
     *;
 }
--keep,allowobfuscation,allowshrinking class com.lamma.app.data.model.** { *; }
+-keep class com.lamma.app.data.model.** { *; }
 
 # Ktor & Supabase Kotlin SDK
 -keep class io.ktor.** { *; }

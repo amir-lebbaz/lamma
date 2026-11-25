@@ -19,19 +19,20 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "17"
-          cache: "gradle"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.7"
 
       - name: Accept Android SDK Licenses
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
-      - name: Grant Execute Permissions for Gradle Wrapper
-        run: chmod +x android-app/gradlew
-
       - name: Build Release APK with Gradle
         working-directory: android-app
         run: |
-          ./gradlew :app:assembleRelease --no-daemon --stacktrace
+          gradle :app:assembleRelease --no-daemon --stacktrace
 
       - name: Copy & Name APK Artifact
         run: |
