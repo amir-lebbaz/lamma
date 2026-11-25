@@ -16,7 +16,7 @@ import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FormatSize
-import androidx.compose.material.icons.filled.LogOut
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Speed
@@ -414,7 +414,7 @@ fun SettingsDialog(
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(imageVector = Icons.Default.LogOut, contentDescription = null, tint = Color(0xFFF28482), modifier = Modifier.size(16.dp))
+                    Icon(imageVector = Icons.Default.ExitToApp, contentDescription = null, tint = Color(0xFFF28482), modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(text = "تبديل الحساب / تسجيل الخروج", color = Color(0xFFF28482), fontSize = 12.5.sp)
                 }
