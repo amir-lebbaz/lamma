@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Checklist
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -28,6 +29,7 @@ fun LammaHeader(
     onOpenChecklist: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenMembers: () -> Unit,
+    onClearChat: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalLammaColors.current
@@ -114,6 +116,17 @@ fun LammaHeader(
                         tint = colors.textPrimary,
                         modifier = Modifier.size(22.dp)
                     )
+                }
+
+                if (onClearChat != null) {
+                    IconButton(onClick = onClearChat) {
+                        Icon(
+                            imageVector = Icons.Default.DeleteOutline,
+                            contentDescription = "محو المحادثة لدي",
+                            tint = colors.textMuted,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
 
                 IconButton(onClick = onOpenSettings) {

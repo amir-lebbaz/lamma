@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Member, Room, MemberWithStatus } from '@/types';
-import { Pin, Users, Settings, Download, ShoppingCart } from 'lucide-react';
+import { Pin, Users, Settings, Download, ShoppingCart, Eraser } from 'lucide-react';
 
 interface HeaderProps {
   room: Room;
@@ -18,6 +18,7 @@ interface HeaderProps {
   onOpenMembers: () => void;
   onOpenSettings: () => void;
   onOpenChecklist?: () => void;
+  onClearChat?: () => void;
 }
 
 export default function Header({
@@ -34,6 +35,7 @@ export default function Header({
   onOpenMembers,
   onOpenSettings,
   onOpenChecklist,
+  onClearChat,
 }: HeaderProps) {
   const onlineCount = membersWithStatus.filter((m) => m.isOnline).length;
   const offlineCount = membersWithStatus.filter((m) => !m.isOnline).length;
@@ -162,6 +164,18 @@ export default function Header({
           >
             <Users className="w-4 h-4" />
           </button>
+
+          {/* Clear Chat Button */}
+          {onClearChat && (
+            <button
+              type="button"
+              onClick={onClearChat}
+              className="p-2 rounded-[10px] text-[var(--text-muted)] hover:text-[#C85A65] hover:bg-white/5 border border-transparent hover:border-[var(--border-subtle)] transition active:scale-95"
+              title="محو المحادثة لدي (إخفاء الرسائل السابقة من شاشتي فقط)"
+            >
+              <Eraser className="w-4 h-4" />
+            </button>
+          )}
 
           {/* Settings Button */}
           <button

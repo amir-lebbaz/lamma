@@ -25,11 +25,12 @@ create table if not exists public.family_members (
   avatar_color text not null default '#415F45',
   avatar_url text default null,
   password_hash text default null,
+  cleared_at timestamptz default null,
   last_seen_at timestamptz default timezone('utc'::text, now()) not null,
   created_at timestamptz default timezone('utc'::text, now()) not null
 );
 
--- 3. Family Messages Table (Chat Messages with Reply & Audio Support)
+-- 3. Family Messages Table (Chat Messages with Reply & Urgent Support)
 create table if not exists public.family_messages (
   id text primary key,
   room_id text not null default 'bayt-al-aela',
@@ -39,6 +40,8 @@ create table if not exists public.family_messages (
   sender_color text not null default '#415F45',
   sender_avatar_url text default null,
   content text default '',
+  message_type text default 'text',
+  is_urgent boolean default false,
   image_url text default null,
   audio_url text default null,
   reply_to_id text default null,

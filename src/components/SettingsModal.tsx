@@ -17,6 +17,7 @@ import {
   Smartphone,
   Download,
   HardDrive,
+  Eraser,
 } from 'lucide-react';
 import { compressImage } from '@/lib/image-utils';
 import { clearLocalMediaCache, getLocalMediaCount } from '@/lib/media-storage';
@@ -36,6 +37,7 @@ interface SettingsModalProps {
   onSelectTheme: (themeId: string) => void;
   onSetCustomBackground: (url: string | null) => void;
   onSwitchUser: () => void;
+  onClearChat?: () => void;
 }
 
 export default function SettingsModal({
@@ -48,6 +50,7 @@ export default function SettingsModal({
   onSelectTheme,
   onSetCustomBackground,
   onSwitchUser,
+  onClearChat,
 }: SettingsModalProps) {
   const [displayName, setDisplayName] = useState(currentMember.display_name);
   const [nickname, setNickname] = useState(currentMember.nickname || '');
@@ -523,6 +526,36 @@ export default function SettingsModal({
               مسح الصور
             </button>
           </div>
+
+          {/* 8. Clear Chat (Delete for Me Only) */}
+          {onClearChat && (
+            <div className="p-3 rounded-[10px] bg-[var(--bg-elevated)]/30 border border-[var(--border-subtle)] flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-[10px] bg-[#C85A65]/20 text-[#FADCD5] flex items-center justify-center flex-shrink-0 border border-[#C85A65]/40">
+                  <Eraser className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xs font-semibold text-[var(--text-primary)] truncate">
+                    محو المحادثة لديك (حذف محلي)
+                  </div>
+                  <div className="text-[10px] text-[var(--text-muted)] truncate">
+                    إخفاء الرسائل السابقة من شاشتك دون حذفها عند العائلة
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onClearChat();
+                }}
+                className="px-2.5 py-1.5 rounded-[10px] border border-[#C85A65]/40 bg-[#C85A65]/10 hover:bg-[#C85A65]/20 text-[#FADCD5] text-xs font-medium transition active:scale-95 flex-shrink-0"
+                title="محو المحادثة من شاشتك"
+              >
+                محو
+              </button>
+            </div>
+          )}
 
           {error && (
             <div className="p-2.5 bg-[#4B2138] border border-[#F28482]/40 rounded-[10px] text-xs text-[#F28482] text-center font-medium">

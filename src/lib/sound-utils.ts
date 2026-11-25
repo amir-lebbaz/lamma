@@ -117,6 +117,55 @@ export function playNotificationSound() {
   }
 }
 
+/**
+ * High-priority Urgent Family Buzz sound (النداء العاجل 🔔).
+ * Loud pulsating alarm chime simulating USAGE_ALARM to bypass subtle chimes for urgent family alerts.
+ */
+export function playUrgentBuzzSound() {
+  if (typeof window === 'undefined') return;
+  try {
+    const isSoundEnabled = localStorage.getItem('family_chat_sound_enabled') !== 'false';
+    if (!isSoundEnabled) return;
+
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(() => {});
+    }
+
+    const now = ctx.currentTime;
+
+    // Pulse 1: 880Hz -> 1175Hz
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = 'sawtooth';
+    osc1.frequency.setValueAtTime(880, now);
+    osc1.frequency.exponentialRampToValueAtTime(1175, now + 0.15);
+    gain1.gain.setValueAtTime(0.18, now);
+    gain1.gain.exponentialRampToValueAtTime(0.005, now + 0.28);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.28);
+
+    // Pulse 2: 880Hz -> 1175Hz (0.2s after pulse 1)
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'sawtooth';
+    osc2.frequency.setValueAtTime(880, now + 0.2);
+    osc2.frequency.exponentialRampToValueAtTime(1175, now + 0.35);
+    gain2.gain.setValueAtTime(0.22, now + 0.2);
+    gain2.gain.exponentialRampToValueAtTime(0.005, now + 0.5);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.2);
+    osc2.stop(now + 0.5);
+  } catch {
+    // Gracefully ignore
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════
    Desktop Force-Alert: Native Notification & Title Flashing
    ═══════════════════════════════════════════════════════════════ */

@@ -76,6 +76,21 @@ class SessionManager(private val context: Context) {
         }
     }
 
+    suspend fun updateMemberClearedAt(clearedAt: String) {
+        context.dataStore.edit { prefs ->
+            val memberJson = prefs[KEY_CURRENT_MEMBER]
+            if (memberJson != null) {
+                try {
+                    val current = json.decodeFromString<Member>(memberJson)
+                    val updated = current.copy(clearedAt = clearedAt)
+                    prefs[KEY_CURRENT_MEMBER] = json.encodeToString(Member.serializer(), updated)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
     suspend fun clearCurrentMember() {
         context.dataStore.edit { prefs ->
             prefs.remove(KEY_CURRENT_MEMBER)

@@ -43,6 +43,15 @@ class ChatRepository(
     private val _typingMember = MutableStateFlow<String?>(null)
     val typingMember: StateFlow<String?> = _typingMember.asStateFlow()
 
+    private var currentClearedAt: String? = null
+
+    fun setClearedAtCutoff(clearedAt: String?) {
+        currentClearedAt = clearedAt
+        if (clearedAt != null) {
+            _messages.value = _messages.value.filter { it.createdAt > clearedAt }
+        }
+    }
+
     fun setTyping(memberName: String, isTyping: Boolean) {
         _typingMember.value = if (isTyping) memberName else null
     }
@@ -54,8 +63,12 @@ class ChatRepository(
         }
     }
 
-    suspend fun loadInitialData() = withContext(Dispatchers.IO) {
+    suspend fun loadInitialData(clearedAt: String? = currentClearedAt) = withContext(Dispatchers.IO) {
         try {
+            if (clearedAt != null) {
+                currentClearedAt = clearedAt
+            }
+
             // Load Room
             val roomData = LammaSupabase.postgrest.from("family_rooms")
                 .select {
@@ -77,9 +90,15 @@ class ChatRepository(
                 .select {
                     filter { eq("room_id", "bayt-al-aela") }
                     order("created_at", Order.DESCENDING)
-                    limit(50)
+                    limit(60)
                 }.decodeList<Message>()
-            _messages.value = msgs
+
+            val cutoff = currentClearedAt
+            _messages.value = if (cutoff != null) {
+                msgs.filter { it.createdAt > cutoff }
+            } else {
+                msgs
+            }.distinctBy { it.id }.sortedByDescending { it.createdAt }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -91,6 +110,7 @@ class ChatRepository(
             
             val messageFlow = channel.postgresChangeFlow<PostgresAction>(schema = "public") {
                 table = "family_messages"
+                filter = "room_id=eq.bayt-al-aela"
             }
 
             channel.subscribe()
@@ -102,7 +122,12 @@ class ChatRepository(
                             val record = action.record
                             try {
                                 val newMsg = json.decodeFromString<Message>(record.toString())
-                                _messages.value = listOf(newMsg) + _messages.value.filter { it.id != newMsg.id }
+                                val cutoff = currentClearedAt
+                                if (cutoff == null || newMsg.createdAt > cutoff) {
+                                    _messages.value = (listOf(newMsg) + _messages.value.filter { it.id != newMsg.id })
+                                        .distinctBy { it.id }
+                                        .sortedByDescending { it.createdAt }
+                                }
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }
@@ -142,7 +167,6 @@ class ChatRepository(
     ) = withContext(Dispatchers.IO) {
         val msgId = UUID.randomUUID().toString()
         val timestamp = java.time.Instant.now().toString()
-        val formattedContent = if (isUrgent && !content.startsWith("🚨")) "🚨 [نداء عاجل] $content" else content
 
         val newMsg = Message(
             id = msgId,
@@ -151,15 +175,20 @@ class ChatRepository(
             senderName = sender.displayName,
             senderNickname = sender.nickname,
             senderColor = sender.avatarColor,
-            content = formattedContent,
+            senderAvatarUrl = sender.avatarUrl,
+            content = content,
+            messageType = if (isUrgent) "urgent" else "text",
+            isUrgent = isUrgent,
             replyToId = replyTo?.id,
             replyToSender = replyTo?.senderName,
             replyToText = replyTo?.content?.take(60),
             createdAt = timestamp
         )
 
-        // Optimistic UI update
-        _messages.value = listOf(newMsg) + _messages.value
+        // Optimistic UI update with deduplication & sorted ordering
+        _messages.value = (listOf(newMsg) + _messages.value.filter { it.id != newMsg.id })
+            .distinctBy { it.id }
+            .sortedByDescending { it.createdAt }
 
         try {
             LammaSupabase.postgrest.from("family_messages").insert(newMsg)
@@ -189,8 +218,12 @@ class ChatRepository(
             senderName = sender.displayName,
             senderNickname = sender.nickname,
             senderColor = sender.avatarColor,
+            senderAvatarUrl = sender.avatarUrl,
             content = null,
+            messageType = "image",
+            isUrgent = false,
             imageUrl = "media-stub:$imageId",
+            imageId = imageId,
             localImageUri = localImageUri,
             replyToId = replyTo?.id,
             replyToSender = replyTo?.senderName,
@@ -198,11 +231,40 @@ class ChatRepository(
             createdAt = timestamp
         )
 
-        _messages.value = listOf(stubMessage) + _messages.value
+        _messages.value = (listOf(stubMessage) + _messages.value.filter { it.id != stubMessage.id })
+            .distinctBy { it.id }
+            .sortedByDescending { it.createdAt }
 
         try {
             LammaSupabase.postgrest.from("family_messages").insert(stubMessage)
         } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Non-destructive per-user chat history cutoff.
+     * Updates member's cleared_at in Supabase and filters out past messages locally.
+     * All messages remain completely intact and visible for other family members.
+     */
+    suspend fun clearChatForUser(member: Member): String = withContext(Dispatchers.IO) {
+        val clearedAt = java.time.Instant.now().toString()
+        currentClearedAt = clearedAt
+        _messages.value = _messages.value.filter { it.createdAt > clearedAt }
+
+        try {
+            LammaSupabase.postgrest.from("family_members").update(
+                buildJsonObject {
+                    put("cleared_at", clearedAt)
+                }
+            ) {
+                filter { eq("id", member.id) }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        clearedAt
+    }
             e.printStackTrace()
         }
     }

@@ -36,6 +36,13 @@ class MainActivity : ComponentActivity() {
             val isSoundEnabled by sessionManager.soundEnabledFlow.collectAsState(initial = true)
             val isUltraLite by sessionManager.ultraLiteFlow.collectAsState(initial = sessionManager.isLowRamDevice())
 
+            LaunchedEffect(currentMember?.id, currentMember?.clearedAt) {
+                if (currentMember != null) {
+                    repository.setClearedAtCutoff(currentMember?.clearedAt)
+                    repository.loadInitialData(currentMember?.clearedAt)
+                }
+            }
+
             val currentTheme = when (savedThemeMode) {
                 ThemeMode.VELVET_INK -> LammaTheme.VELVET_INK
                 else -> LammaTheme.SAKURA_DUSK
@@ -91,6 +98,14 @@ class MainActivity : ComponentActivity() {
                             onLogout = {
                                 lifecycleScope.launch {
                                     sessionManager.clearCurrentMember()
+                                }
+                            },
+                            onClearChat = {
+                                lifecycleScope.launch {
+                                    currentMember?.let { member ->
+                                        val clearedAt = repository.clearChatForUser(member)
+                                        sessionManager.updateMemberClearedAt(clearedAt)
+                                    }
                                 }
                             }
                         )

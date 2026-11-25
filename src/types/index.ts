@@ -5,6 +5,7 @@ export interface Member {
   nickname?: string | null;
   avatar_color: string;
   avatar_url?: string | null;
+  cleared_at?: string | null;
   last_seen_at: string;
   created_at?: string;
 }
@@ -44,6 +45,8 @@ export interface Message {
   sender_color: string;
   sender_avatar_url?: string | null;
   content: string;
+  message_type?: string;
+  is_urgent?: boolean;
   image_url?: string | null;
   image_id?: string | null;
   audio_url?: string | null; // deprecated / stripped

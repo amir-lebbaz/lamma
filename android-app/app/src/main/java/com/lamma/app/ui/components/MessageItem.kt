@@ -130,13 +130,15 @@ fun MessageItem(
             }
 
             // Message Bubble
+            val isUrgentMessage = message.isUrgent || message.messageType == "urgent"
+
             Column(
                 modifier = Modifier
                     .widthIn(min = 90.dp, max = 290.dp)
                     .clip(bubbleShape)
                     .background(if (isMe) colors.accentPrimary else colors.bgElevated)
                     .border(
-                        border = BorderStroke(1.dp, colors.borderSubtle),
+                        border = BorderStroke(1.dp, if (isUrgentMessage) Color(0xFFC85A65) else colors.borderSubtle),
                         shape = bubbleShape
                     )
                     .combinedClickable(
@@ -145,6 +147,30 @@ fun MessageItem(
                     )
                     .padding(horizontal = 12.dp, vertical = 8.dp)
             ) {
+                // Urgent Family Buzz Alert Badge
+                if (isUrgentMessage) {
+                    Surface(
+                        color = Color(0xFFC85A65).copy(alpha = 0.25f),
+                        shape = RoundedCornerShape(10.dp),
+                        border = BorderStroke(1.dp, Color(0xFFC85A65).copy(alpha = 0.5f)),
+                        modifier = Modifier.padding(bottom = 6.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text("🚨", fontSize = 11.sp)
+                            Text(
+                                text = "نداء عاجل",
+                                color = colors.textPrimary,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+
                 // Sender info for other members
                 if (!isMe) {
                     Row(

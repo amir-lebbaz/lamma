@@ -6,7 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Member(
     val id: String,
-    val username: String,
+    @SerialName("room_id")
+    val roomId: String = "bayt-al-aela",
+    val username: String = "",
     @SerialName("display_name")
     val displayName: String,
     val nickname: String? = null,
@@ -14,10 +16,14 @@ data class Member(
     val avatarColor: String = "#FADCD5",
     @SerialName("avatar_url")
     val avatarUrl: String? = null,
-    @SerialName("last_seen")
-    val lastSeen: String? = null,
+    @SerialName("password_hash")
+    val passwordHash: String? = null,
+    @SerialName("last_seen_at")
+    val lastSeenAt: String? = null,
     @SerialName("created_at")
-    val createdAt: String? = null
+    val createdAt: String? = null,
+    @SerialName("cleared_at")
+    val clearedAt: String? = null
 )
 
 @Serializable
@@ -33,9 +39,19 @@ data class Message(
     val senderNickname: String? = null,
     @SerialName("sender_color")
     val senderColor: String = "#FADCD5",
+    @SerialName("sender_avatar_url")
+    val senderAvatarUrl: String? = null,
     val content: String? = null,
+    @SerialName("message_type")
+    val messageType: String = "text",
+    @SerialName("is_urgent")
+    val isUrgent: Boolean = false,
     @SerialName("image_url")
     val imageUrl: String? = null,
+    @SerialName("image_id")
+    val imageId: String? = null,
+    @SerialName("audio_url")
+    val audioUrl: String? = null,
     @SerialName("reply_to_id")
     val replyToId: String? = null,
     @SerialName("reply_to_sender")

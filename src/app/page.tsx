@@ -5,6 +5,7 @@ import { Member, MemberWithStatus, Message, ReactionEmoji, Room, BACKGROUND_THEM
 import { chatService } from '@/lib/chat-service';
 import {
   playNotificationSound,
+  playUrgentBuzzSound,
   initAudioUnlock,
   requestNotificationPermission,
   triggerDesktopNotification,
@@ -22,6 +23,7 @@ import MembersModal from '@/components/MembersModal';
 import SettingsModal from '@/components/SettingsModal';
 import DesktopSidebar from '@/components/DesktopSidebar';
 import ChecklistModal from '@/components/ChecklistModal';
+import ClearChatModal from '@/components/ClearChatModal';
 import PWAInstallBanner from '@/components/PWAInstallBanner';
 import MobileWebDownloadGate from '@/components/MobileWebDownloadGate';
 import { Loader2 } from 'lucide-react';
@@ -46,6 +48,7 @@ export default function FamilyChatPage() {
   const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
   const [isChecklistModalOpen, setIsChecklistModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isClearChatOpen, setIsClearChatOpen] = useState(false);
   const [themeId, setThemeId] = useState('sakura-dusk');
   const [customBackgroundUrl, setCustomBackgroundUrl] = useState<string | null>(null);
   const [typingUser, setTypingUser] = useState<string | null>(null);
@@ -155,12 +158,12 @@ export default function FamilyChatPage() {
     }
   }, []);
 
-  // Fetch room data, real messages, and real members
+  // Fetch room data, real messages, and real members (respecting per-user cleared_at cutoff)
   const loadRoomData = useCallback(async (member: Member) => {
     try {
       const [roomData, messageList, initialChecklist] = await Promise.all([
         chatService.getRoom(FIXED_ROOM_ID),
-        chatService.getMessages(FIXED_ROOM_ID),
+        chatService.getMessages(FIXED_ROOM_ID, member.cleared_at),
         chatService.getChecklist(FIXED_ROOM_ID),
       ]);
 
@@ -182,21 +185,40 @@ export default function FamilyChatPage() {
 
     loadRoomData(currentMember);
 
-    // Subscribe to real-time events & presence
+    // Subscribe to shared cross-platform real-time events & presence
     const unsubscribe = chatService.subscribeToRoom(FIXED_ROOM_ID, currentMember, {
       onMessage: (newMsg) => {
         if (currentMember && newMsg.sender_id !== currentMember.id) {
-          playNotificationSound();
-          if (isWindowUnfocused()) {
-            const previewText = newMsg.content || (newMsg.image_url ? '📷 أرسل صورة جديدة' : 'رسالة جديدة');
-            triggerDesktopNotification(newMsg.sender_name, previewText);
-            startTitleFlash('🔴 (1) رسالة جديدة في لَمّة! ⚡');
+          if (newMsg.is_urgent || newMsg.message_type === 'urgent') {
+            playUrgentBuzzSound();
+            triggerDesktopNotification(`🚨 نداء عاجل: ${newMsg.sender_name}`, newMsg.content || 'نداء عائلي عاجل');
+            startTitleFlash('🚨 نداء عاجل في لَمّة! 🔔');
+          } else {
+            playNotificationSound();
+            if (isWindowUnfocused()) {
+              const previewText = newMsg.content || (newMsg.image_url ? '📷 أرسل صورة جديدة' : 'رسالة جديدة');
+              triggerDesktopNotification(newMsg.sender_name, previewText);
+              startTitleFlash('🔴 (1) رسالة جديدة في لَمّة! ⚡');
+            }
           }
         }
         setMessages((prev) => {
-          if (prev.some((m) => m.id === newMsg.id)) return prev;
-          return [...prev, newMsg];
+          const exists = prev.some((m) => m.id === newMsg.id);
+          let next: Message[];
+          if (exists) {
+            next = prev.map((m) => (m.id === newMsg.id ? { ...m, ...newMsg } : m));
+          } else {
+            next = [...prev, newMsg];
+          }
+          return next.sort(
+            (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          );
         });
+      },
+      onMessageUpdated: (updatedMsg) => {
+        setMessages((prev) =>
+          prev.map((m) => (m.id === updatedMsg.id ? { ...m, ...updatedMsg } : m))
+        );
       },
       onMessageDeleted: (deletedId) => {
         setMessages((prev) => prev.filter((m) => m.id !== deletedId));
@@ -335,7 +357,7 @@ export default function FamilyChatPage() {
   };
 
   // Handle Sending Messages
-  const handleSendMessage = async (text: string, photoFile: File | null) => {
+  const handleSendMessage = async (text: string, photoFile: File | null, isUrgent?: boolean) => {
     if (!currentMember) return;
 
     let imageUrl: string | null = null;
@@ -354,6 +376,8 @@ export default function FamilyChatPage() {
       sender_color: currentMember.avatar_color,
       sender_avatar_url: currentMember.avatar_url || null,
       content: text,
+      message_type: isUrgent ? 'urgent' : (imageUrl ? 'image' : 'text'),
+      is_urgent: Boolean(isUrgent),
       image_url: imageUrl,
       image_id: imageId,
       audio_url: null,
@@ -365,9 +389,37 @@ export default function FamilyChatPage() {
     });
 
     setMessages((prev) => {
-      if (prev.some((m) => m.id === created.id)) return prev;
-      return [...prev, created];
+      const exists = prev.some((m) => m.id === created.id);
+      let next: Message[];
+      if (exists) {
+        next = prev.map((m) => (m.id === created.id ? { ...m, ...created } : m));
+      } else {
+        next = [...prev, created];
+      }
+      return next.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
     });
+  };
+
+  // Handle Per-User Non-Destructive "Clear Chat" (Delete for Me Only)
+  const handleClearChatForMe = async () => {
+    if (!currentMember) return;
+    try {
+      const newClearedAt = await chatService.clearChatForMember(FIXED_ROOM_ID, currentMember);
+      const updatedMember: Member = {
+        ...currentMember,
+        cleared_at: newClearedAt,
+      };
+      setCurrentMember(updatedMember);
+      try {
+        localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(updatedMember));
+      } catch (e) {
+        console.warn('Storage save error:', e);
+      }
+      const cutoffTime = new Date(newClearedAt).getTime();
+      setMessages((prev) => prev.filter((m) => new Date(m.created_at).getTime() > cutoffTime));
+    } catch (err) {
+      console.error('Error clearing chat:', err);
+    }
   };
 
   // Handle Deleting Message
@@ -542,6 +594,7 @@ export default function FamilyChatPage() {
           onToggleNotice={() => setIsNoticeOpen(!isNoticeOpen)}
           onOpenMembers={() => setIsMembersModalOpen(true)}
           onOpenSettings={() => setIsSettingsOpen(true)}
+          onClearChat={() => setIsClearChatOpen(true)}
         />
 
         {/* Sleek Collapsible Pinned Banner */}
@@ -618,6 +671,17 @@ export default function FamilyChatPage() {
         onSelectTheme={handleSelectTheme}
         onSetCustomBackground={handleSetCustomBackground}
         onSwitchUser={handleSwitchUser}
+        onClearChat={() => {
+          setIsSettingsOpen(false);
+          setIsClearChatOpen(true);
+        }}
+      />
+
+      {/* Per-User Clear Chat Confirmation Modal */}
+      <ClearChatModal
+        isOpen={isClearChatOpen}
+        onClose={() => setIsClearChatOpen(false)}
+        onConfirm={handleClearChatForMe}
       />
     </div>
   );

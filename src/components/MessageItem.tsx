@@ -374,13 +374,23 @@ export default function MessageItem({
           {/* Bubble Card (Styled with --bubble-outgoing) */}
           <div
             onClick={() => setShowToolbar((prev) => !prev)}
-            className="relative rounded-2xl rounded-br-[4px] px-3.5 py-2 border border-[var(--border-subtle)] bg-[var(--accent-primary)] text-[var(--text-primary)] cursor-pointer sm:cursor-default select-text transition active:scale-[0.99]"
+            className={`relative rounded-2xl rounded-br-[4px] px-3.5 py-2 border text-[var(--text-primary)] cursor-pointer sm:cursor-default select-text transition active:scale-[0.99] ${
+              message.is_urgent || message.message_type === 'urgent'
+                ? 'bg-[var(--accent-primary)] border-[#C85A65] shadow-[0_0_12px_rgba(200,90,101,0.25)]'
+                : 'bg-[var(--accent-primary)] border-[var(--border-subtle)]'
+            }`}
           >
             {/* Header tag */}
             <div className="flex items-center justify-between gap-2 mb-1 select-none">
               <span className="text-[9.5px] font-bold text-[var(--text-primary)] bg-black/20 px-1.5 py-0.5 rounded-md">
                 أنت
               </span>
+              {(message.is_urgent || message.message_type === 'urgent') && (
+                <span className="flex items-center gap-1 text-[10.5px] font-bold text-[#FADCD5] bg-[#C85A65]/30 border border-[#C85A65]/50 px-2 py-0.5 rounded-full">
+                  <span>🚨</span>
+                  <span>نداء عاجل</span>
+                </span>
+              )}
             </div>
 
             {/* Quoted Message */}
@@ -473,8 +483,19 @@ export default function MessageItem({
           {/* Bubble Card (Styled with --bg-elevated) */}
           <div
             onClick={() => setShowToolbar((prev) => !prev)}
-            className="relative w-full rounded-2xl rounded-bl-[4px] px-3.5 py-2 border border-[var(--border-subtle)] bg-[var(--bg-elevated)] text-[var(--text-primary)] cursor-pointer sm:cursor-default select-text transition active:scale-[0.99]"
+            className={`relative w-full rounded-2xl rounded-bl-[4px] px-3.5 py-2 border text-[var(--text-primary)] cursor-pointer sm:cursor-default select-text transition active:scale-[0.99] ${
+              message.is_urgent || message.message_type === 'urgent'
+                ? 'bg-[var(--bg-elevated)] border-[#C85A65] shadow-[0_0_12px_rgba(200,90,101,0.25)]'
+                : 'bg-[var(--bg-elevated)] border-[var(--border-subtle)]'
+            }`}
           >
+            {/* Urgent Badge */}
+            {(message.is_urgent || message.message_type === 'urgent') && (
+              <div className="flex items-center gap-1 mb-1.5 px-2 py-0.5 rounded-full bg-[#C85A65]/30 border border-[#C85A65]/50 text-[#FADCD5] text-[10.5px] font-bold w-fit">
+                <span>🚨</span>
+                <span>نداء عاجل</span>
+              </div>
+            )}
             {/* Quoted Message */}
             {renderReplyBanner()}
 

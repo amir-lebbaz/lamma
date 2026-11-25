@@ -44,7 +44,8 @@ fun ChatScreen(
     onToggleLargeText: (Boolean) -> Unit,
     onToggleSound: (Boolean) -> Unit,
     onToggleUltraLite: (Boolean) -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onClearChat: () -> Unit
 ) {
     val colors = LocalLammaColors.current
     val context = LocalContext.current
@@ -60,6 +61,7 @@ fun ChatScreen(
     var isChecklistOpen by remember { mutableStateOf(false) }
     var isSettingsOpen by remember { mutableStateOf(false) }
     var isMembersOpen by remember { mutableStateOf(false) }
+    var isClearChatDialogOpen by remember { mutableStateOf(false) }
     var viewerImageUrl by remember { mutableStateOf<String?>(null) }
 
     val listState = rememberLazyListState()
@@ -70,7 +72,11 @@ fun ChatScreen(
         if (messages.size > previousMessageCount) {
             val latest = messages.firstOrNull()
             if (latest != null && latest.senderId != currentMember.id) {
-                soundManager.playIncomingMessageChime(isSoundEnabled)
+                if (latest.isUrgent || latest.messageType == "urgent") {
+                    soundManager.playUrgentFamilyBuzz(isSoundEnabled)
+                } else {
+                    soundManager.playIncomingMessageChime(isSoundEnabled)
+                }
             }
         }
         previousMessageCount = messages.size
@@ -157,7 +163,8 @@ fun ChatScreen(
                 onToggleNotice = { isNoticeOpen = !isNoticeOpen },
                 onOpenChecklist = { isChecklistOpen = true },
                 onOpenSettings = { isSettingsOpen = true },
-                onOpenMembers = { isMembersOpen = true }
+                onOpenMembers = { isMembersOpen = true },
+                onClearChat = { isClearChatDialogOpen = true }
             )
 
             // Pinned Notice Card
@@ -362,7 +369,84 @@ fun ChatScreen(
             onToggleSound = onToggleSound,
             onToggleUltraLite = onToggleUltraLite,
             onLogout = onLogout,
+            onClearChat = {
+                isSettingsOpen = false
+                isClearChatDialogOpen = true
+            },
             onClose = { isSettingsOpen = false }
         )
+    }
+
+    // Clear Chat Confirmation Dialog (Delete for Me Only)
+    if (isClearChatDialogOpen) {
+        androidx.compose.ui.window.Dialog(onDismissRequest = { isClearChatDialogOpen = false }) {
+            Surface(
+                color = colors.bgSurface,
+                shape = RoundedCornerShape(14.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, colors.borderSubtle),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Surface(
+                            color = Color(0xFFC85A65).copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(10.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFC85A65).copy(alpha = 0.4f)),
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Text("🗑️", fontSize = 16.sp)
+                            }
+                        }
+                        Text(
+                            text = "محو المحادثة لديك",
+                            color = colors.textPrimary,
+                            fontSize = 16.sp,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                        )
+                    }
+
+                    Text(
+                        text = "سيتم إخفاء الرسائل السابقة من هاتفك فقط دون حذفها عند أفراد العائلة، وستصلك أي رسائل جديدة ترسل بعد ذلك بشكل طبيعي.",
+                        color = colors.textMuted,
+                        fontSize = 13.sp,
+                        lineHeight = 18.sp
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
+                    ) {
+                        OutlinedButton(
+                            onClick = { isClearChatDialogOpen = false },
+                            shape = RoundedCornerShape(10.dp),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, colors.borderSubtle)
+                        ) {
+                            Text("إلغاء", color = colors.textMuted, fontSize = 13.sp)
+                        }
+
+                        Button(
+                            onClick = {
+                                isClearChatDialogOpen = false
+                                onClearChat()
+                                Toast.makeText(context, "تم محو المحادثة من هاتفك بنجاح", Toast.LENGTH_SHORT).show()
+                            },
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFC85A65))
+                        ) {
+                            Text("محو من هاتفي", color = Color(0xFFFADCD5), fontSize = 13.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BatteryAlert
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.FormatSize
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.NotificationsActive
@@ -52,6 +53,7 @@ fun SettingsDialog(
     onToggleSound: (Boolean) -> Unit,
     onToggleUltraLite: (Boolean) -> Unit,
     onLogout: () -> Unit,
+    onClearChat: (() -> Unit)? = null,
     onClose: () -> Unit
 ) {
     val colors = LocalLammaColors.current
@@ -404,6 +406,39 @@ fun SettingsDialog(
                             }
                         }
                         Text(text = "مسح", color = Color(0xFFF28482), fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                    }
+                }
+
+                // Clear Chat History for Current Member (Delete for Me Only)
+                if (onClearChat != null) {
+                    Surface(
+                        color = colors.bgCanvas,
+                        shape = RoundedCornerShape(10.dp),
+                        border = BorderStroke(1.dp, colors.borderSubtle),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onClose()
+                                onClearChat()
+                            }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(imageVector = Icons.Default.DeleteOutline, contentDescription = null, tint = Color(0xFFC85A65), modifier = Modifier.size(18.dp))
+                                Column {
+                                    Text(text = "محو المحادثة لديك (حذف محلي)", color = colors.textPrimary, fontSize = 12.5.sp, fontWeight = FontWeight.Medium)
+                                    Text(text = "إخفاء الرسائل السابقة من هاتفك فقط", color = colors.textMuted, fontSize = 10.sp)
+                                }
+                            }
+                            Text(text = "محو", color = Color(0xFFC85A65), fontSize = 11.sp, fontWeight = FontWeight.Medium)
+                        }
                     }
                 }
 

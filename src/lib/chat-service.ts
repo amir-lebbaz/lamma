@@ -154,12 +154,15 @@ class ChatService {
     return updated;
   }
 
-  async getMessages(roomId: string = 'bayt-al-aela'): Promise<Message[]> {
+  async getMessages(roomId: string = 'bayt-al-aela', clearedAt?: string | null): Promise<Message[]> {
+    const cutoffMs = clearedAt ? new Date(clearedAt).getTime() : 0;
+
     if (isSupabaseConfigured && supabase) {
       try {
         const { data: messages, error } = await supabase
           .from('family_messages')
           .select('*')
+          .eq('room_id', roomId)
           .order('created_at', { ascending: true });
 
         if (error) {
@@ -178,12 +181,13 @@ class ChatService {
             {}
           );
 
-          // Filter out checklist records and legacy demo messages
+          // Filter out checklist records, legacy demo messages, and messages before per-user cleared_at cutoff
           const filtered = messages.filter(
             (m) =>
               !m.id.startsWith('checklist-') &&
               !m.id.startsWith('demo-') &&
-              !(m.content && m.content.startsWith('__CHECKLIST__'))
+              !(m.content && m.content.startsWith('__CHECKLIST__')) &&
+              (!cutoffMs || new Date(m.created_at).getTime() > cutoffMs)
           );
 
           // Auto-cache any received live image payloads into IndexedDB before Supabase purges them
@@ -210,9 +214,10 @@ class ChatService {
       (m) =>
         !m.id.startsWith('demo-') &&
         !m.id.startsWith('checklist-') &&
-        !(m.content && m.content.startsWith('__CHECKLIST__'))
+        !(m.content && m.content.startsWith('__CHECKLIST__')) &&
+        (!cutoffMs || new Date(m.created_at).getTime() > cutoffMs)
     );
-    if (clean.length !== local.length) {
+    if (clean.length !== local.length && !cutoffMs) {
       safeSetItem(key, clean);
     }
     return clean;
@@ -222,10 +227,18 @@ class ChatService {
     roomId: string = 'bayt-al-aela',
     messageData: Omit<Message, 'id' | 'created_at' | 'reactions'>
   ): Promise<Message> {
+    const isUrgent = Boolean(messageData.is_urgent);
+    const msgId =
+      typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : 'msg-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
+
     const newMessage: Message = {
       ...messageData,
-      id: 'msg-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      id: msgId,
       room_id: roomId,
+      message_type: messageData.message_type || (isUrgent ? 'urgent' : (messageData.image_url ? 'image' : 'text')),
+      is_urgent: isUrgent,
       created_at: new Date().toISOString(),
       reactions: [],
     };
@@ -259,6 +272,8 @@ class ChatService {
             sender_color: newMessage.sender_color,
             sender_avatar_url: newMessage.sender_avatar_url || null,
             content: newMessage.content,
+            message_type: newMessage.message_type || (newMessage.is_urgent ? 'urgent' : (newMessage.image_url ? 'image' : 'text')),
+            is_urgent: Boolean(newMessage.is_urgent),
             image_url: newMessage.image_url || null,
             audio_url: null,
             reply_to_id: newMessage.reply_to_id || null,
@@ -539,6 +554,32 @@ class ChatService {
     }
   }
 
+  // Per-user non-destructive Clear Chat (Delete for Me Only)
+  async clearChatForMember(roomId: string = 'bayt-al-aela', member: Member): Promise<string> {
+    const clearedAt = new Date().toISOString();
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase
+          .from('family_members')
+          .update({ cleared_at: clearedAt })
+          .eq('id', member.id);
+      } catch (err) {
+        console.warn('Supabase clearChatForMember error:', err);
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(`family_chat_cleared_at_${member.id}`, clearedAt);
+      } catch (e) {
+        console.warn('localStorage clearChat save error:', e);
+      }
+    }
+
+    return clearedAt;
+  }
+
   // Broadcast typing status
   sendTypingPing(roomId: string, memberName: string): void {
     const channel = this.getBroadcastChannel(roomId);
@@ -602,6 +643,7 @@ class ChatService {
           nickname: target.nickname || null,
           avatar_color: target.avatar_color,
           avatar_url: target.avatar_url || null,
+          cleared_at: target.cleared_at || null,
           last_seen_at: new Date().toISOString(),
           created_at: target.created_at,
         };
@@ -700,6 +742,7 @@ class ChatService {
           nickname: data.nickname || null,
           avatar_color: data.avatar_color,
           avatar_url: data.avatar_url || null,
+          cleared_at: data.cleared_at || null,
           last_seen_at: data.last_seen_at,
           created_at: data.created_at,
         };
@@ -952,6 +995,7 @@ class ChatService {
     currentMember: Member,
     callbacks: {
       onMessage?: (msg: Message) => void;
+      onMessageUpdated?: (msg: Message) => void;
       onMessageDeleted?: (messageId: string) => void;
       onReaction?: (payload: { messageId: string; reaction: Reaction; action: 'INSERT' | 'DELETE' }) => void;
       onRoomUpdate?: (room: Partial<Room>) => void;
@@ -967,7 +1011,14 @@ class ChatService {
       if (!data || !data.type) return;
 
       if (data.type === 'NEW_MESSAGE' && callbacks.onMessage) {
+        if (currentMember.cleared_at) {
+          if (new Date(data.payload.created_at).getTime() <= new Date(currentMember.cleared_at).getTime()) {
+            return;
+          }
+        }
         callbacks.onMessage(data.payload);
+      } else if (data.type === 'MESSAGE_UPDATED' && callbacks.onMessageUpdated) {
+        callbacks.onMessageUpdated(data.payload);
       } else if (data.type === 'MESSAGE_DELETED' && callbacks.onMessageDeleted) {
         callbacks.onMessageDeleted(data.payload);
       } else if (data.type === 'TYPING' && callbacks.onTyping) {
@@ -1030,12 +1081,12 @@ class ChatService {
             }
           });
 
-        // Postgres changes for messages, reactions, rooms, and members
+        // Shared cross-platform Postgres changes channel for family_messages
         supabaseChannel = supabase
-          .channel(`room_data_global`)
+          .channel('lamma-room-channel')
           .on(
             'postgres_changes',
-            { event: '*', schema: 'public', table: 'family_messages' },
+            { event: '*', schema: 'public', table: 'family_messages', filter: `room_id=eq.${roomId}` },
             (payload) => {
               const newRecord = payload.new as any;
               // Check if record is a shared checklist update
@@ -1057,11 +1108,22 @@ class ChatService {
 
               if (payload.eventType === 'INSERT' && callbacks.onMessage) {
                 const msg = payload.new as Message;
+                // Per-user clear chat cutoff
+                if (currentMember.cleared_at) {
+                  if (new Date(msg.created_at).getTime() <= new Date(currentMember.cleared_at).getTime()) {
+                    return;
+                  }
+                }
                 if (msg.image_url && msg.image_url.startsWith('data:')) {
                   const imageId = msg.image_id || (msg.image_url.startsWith('media-stub:') ? msg.image_url.replace('media-stub:', '') : msg.id);
                   saveMediaLocally(imageId, msg.image_url).catch(() => {});
                 }
                 callbacks.onMessage({ ...msg, reactions: [] });
+              } else if (payload.eventType === 'UPDATE') {
+                const updatedMsg = payload.new as Message;
+                if (callbacks.onMessageUpdated) {
+                  callbacks.onMessageUpdated(updatedMsg);
+                }
               } else if (payload.eventType === 'DELETE' && callbacks.onMessageDeleted) {
                 const deletedId = (payload.old as { id?: string })?.id;
                 if (deletedId) callbacks.onMessageDeleted(deletedId);

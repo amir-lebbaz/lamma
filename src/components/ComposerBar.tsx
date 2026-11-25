@@ -8,12 +8,13 @@ import {
   X,
   CornerUpRight,
   Loader2,
+  BellRing,
 } from 'lucide-react';
 
 interface ComposerBarProps {
   replyingTo: Message | null;
   onCancelReply: () => void;
-  onSendMessage: (text: string, photoFile: File | null) => Promise<void>;
+  onSendMessage: (text: string, photoFile: File | null, isUrgent?: boolean) => Promise<void>;
   onTyping?: () => void;
   composerClass?: string;
   isDark?: boolean;
@@ -29,6 +30,7 @@ export default function ComposerBar({
   const [text, setText] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isUrgent, setIsUrgent] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -75,9 +77,10 @@ export default function ComposerBar({
 
     setIsSending(true);
     try {
-      await onSendMessage(trimmed, selectedFile);
+      await onSendMessage(trimmed, selectedFile, isUrgent);
       setText('');
       removeSelectedFile();
+      setIsUrgent(false);
       if (replyingTo) {
         onCancelReply();
       }
@@ -128,6 +131,23 @@ export default function ComposerBar({
           </div>
         )}
 
+        {/* Urgent Family Buzz Active Banner */}
+        {isUrgent && (
+          <div className="mb-2 px-3 py-1.5 rounded-[10px] bg-[#C85A65]/15 border border-[#C85A65]/40 text-[#FADCD5] text-xs flex items-center justify-between animate-in fade-in">
+            <div className="flex items-center gap-1.5 font-medium">
+              <span>🚨</span>
+              <span>نداء عاجل: سيصل بتنبيه صوتي واهتزاز فوري لجميع الأجهزة</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsUrgent(false)}
+              className="text-[11px] text-[#FADCD5]/70 hover:text-[#FADCD5] px-1 py-0.5 rounded transition"
+            >
+              إلغاء
+            </button>
+          </div>
+        )}
+
         {/* Selected Image Thumbnail Preview */}
         {previewUrl && (
           <div className="mb-2 relative inline-block animate-in fade-in zoom-in-95">
@@ -169,6 +189,20 @@ export default function ComposerBar({
             <ImageIcon className="w-5 h-5 text-[var(--text-primary)]" />
           </button>
 
+          {/* Urgent Family Buzz Toggle Button */}
+          <button
+            type="button"
+            onClick={() => setIsUrgent((prev) => !prev)}
+            className={`w-10 h-10 rounded-[10px] border transition active:scale-95 flex-shrink-0 flex items-center justify-center ${
+              isUrgent
+                ? 'bg-[#C85A65] border-[#C85A65] text-white shadow-sm ring-2 ring-[#C85A65]/40'
+                : 'border-[var(--border-subtle)] bg-[var(--bg-canvas)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]'
+            }`}
+            title={isUrgent ? 'إلغاء وضع النداء العاجل' : 'نداء عاجل للعائلة (إنذار صوتي فوري)'}
+          >
+            <BellRing className={`w-5 h-5 ${isUrgent ? 'animate-bounce' : ''}`} />
+          </button>
+
           {/* Textarea with Enter/Shift+Enter shortcut */}
           <div className="flex-1 min-w-0">
             <textarea
@@ -179,9 +213,13 @@ export default function ComposerBar({
                 onTyping?.();
               }}
               onKeyDown={handleKeyDown}
-              placeholder="اكتب رسالة... (Enter للإرسال)"
+              placeholder={isUrgent ? 'اكتب نداءك العاجل للعائلة... (Enter للإرسال)' : 'اكتب رسالة... (Enter للإرسال)'}
               rows={1}
-              className="w-full px-3.5 py-2.5 rounded-[10px] border border-[var(--border-subtle)] bg-[var(--bg-canvas)] text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none focus:border-[var(--text-primary)]/40 resize-none leading-normal transition select-text"
+              className={`w-full px-3.5 py-2.5 rounded-[10px] border bg-[var(--bg-canvas)] text-[var(--text-primary)] placeholder-[var(--text-muted)] text-sm focus:outline-none resize-none leading-normal transition select-text ${
+                isUrgent
+                  ? 'border-[#C85A65] focus:border-[#C85A65] ring-1 ring-[#C85A65]/30'
+                  : 'border-[var(--border-subtle)] focus:border-[var(--text-primary)]/40'
+              }`}
             />
           </div>
 
@@ -189,7 +227,11 @@ export default function ComposerBar({
           <button
             type="submit"
             disabled={isSending || (!text.trim() && !selectedFile)}
-            className="w-10 h-10 rounded-[10px] bg-[var(--accent-primary)] hover:opacity-90 active:scale-95 text-[var(--text-primary)] transition flex-shrink-0 flex items-center justify-center border border-[var(--border-subtle)] disabled:opacity-30 disabled:pointer-events-none"
+            className={`w-10 h-10 rounded-[10px] text-[var(--text-primary)] transition flex-shrink-0 flex items-center justify-center border disabled:opacity-30 disabled:pointer-events-none active:scale-95 ${
+              isUrgent
+                ? 'bg-[#C85A65] border-[#C85A65] hover:opacity-90'
+                : 'bg-[var(--accent-primary)] border-[var(--border-subtle)] hover:opacity-90'
+            }`}
             title="إرسال (Enter)"
           >
             {isSending ? (
