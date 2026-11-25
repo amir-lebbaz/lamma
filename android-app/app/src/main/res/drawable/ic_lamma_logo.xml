@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Background rounded square #1B0C1A -->
+    <path
+        android:fillColor="#1B0C1A"
+        android:pathData="M24,4 h60 a20,20 0 0,1 20,20 v60 a20,20 0 0,1 -20,20 h-60 a20,20 0 0,1 -20,-20 v-60 a20,20 0 0,1 20,-20 z" />
+        
+    <!-- Two subtle family dots in #FADCD5 -->
+    <!-- Left dot -->
+    <path
+        android:fillColor="#FADCD5"
+        android:pathData="M43.5,42.5 m-5.5,0 a5.5,5.5 0 1,0 11,0 a5.5,5.5 0 1,0 -11,0" />
+        
+    <!-- Right dot -->
+    <path
+        android:fillColor="#FADCD5"
+        android:pathData="M64.5,42.5 m-5.5,0 a5.5,5.5 0 1,0 11,0 a5.5,5.5 0 1,0 -11,0" />
+        
+    <!-- Organic warm crescent / smile curve beneath (Family gathering embrace) -->
+    <path
+        android:strokeColor="#FADCD5"
+        android:strokeWidth="6.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M31,56.5 C38,79 70,79 77,56.5" />
+</vector>

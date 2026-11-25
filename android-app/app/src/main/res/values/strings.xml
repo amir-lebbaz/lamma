@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">لَمّة</string>
+    <string name="app_tagline">محادثة عائلية دافئة وخاصة</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="register">فرد جديد</string>
+    <string name="welcome_to_family">أهلاً بك في لَمّة العائلة</string>
+    <string name="password_hint">كلمة المرور العائلية</string>
+    <string name="select_name_hint">اختر اسمك أو سجّل كفرد جديد</string>
+    <string name="type_message_hint">اكتب رسالتك العائلية...</string>
+    <string name="send">إرسال</string>
+    <string name="household_checklist">نواقص البيت</string>
+    <string name="settings">الإعدادات والمظهر</string>
+    <string name="theme_sakura">سكون الغسق</string>
+    <string name="theme_velvet">ليل المخمل</string>
+    <string name="large_text_mode">وضع الخط الكبير</string>
+    <string name="clear_media_cache">مسح الصور المحفوظة محلياً</string>
+    <string name="save_to_gallery">حفظ في الاستوديو</string>
+    <string name="zino_greeting">مياو! زينو يسلّم عليكم 🐾</string>
+    <string name="zino_badge">قط العائلة 🐾</string>
+</resources>

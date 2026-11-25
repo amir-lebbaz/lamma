@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Two subtle family dots in #FADCD5 -->
+    <path
+        android:fillColor="#FADCD5"
+        android:pathData="M43.5,43 m-5.5,0 a5.5,5.5 0 1,0 11,0 a5.5,5.5 0 1,0 -11,0" />
+    <path
+        android:fillColor="#FADCD5"
+        android:pathData="M64.5,43 m-5.5,0 a5.5,5.5 0 1,0 11,0 a5.5,5.5 0 1,0 -11,0" />
+        
+    <!-- Organic warm crescent / smile curve beneath -->
+    <path
+        android:strokeColor="#FADCD5"
+        android:strokeWidth="6.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M31,57 C38,79 70,79 77,57" />
+</vector>

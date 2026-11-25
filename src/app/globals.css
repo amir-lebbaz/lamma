@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════
+   «لَمّة» (Lamma) - Exclusive 2-Theme Design System Tokens
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Default / Theme 1: «سكون الغسق» (Sakura Dusk) */
+:root,
+.theme-sakura-dusk {
+  --bg-main: #1B0C1A;
+  --bg-surface: #2D222F;
+  --bubble-outgoing: #6D3C52;
+  --bubble-outgoing-text: #FADCD5;
+  --bubble-incoming: #4B2138;
+  --bubble-incoming-text: #FADCD5;
+  --text-primary: #FADCD5;
+  --accent: #FADCD5;
+  --text-muted: #765D67;
+  --border: #765D67;
+  --background: #1B0C1A;
+  --foreground: #FADCD5;
+}
+
+/* Theme 2: «ليل المخمل» (Velvet Ink) */
+.theme-velvet-ink {
+  --bg-main: #0B1421;
+  --bg-surface: #283041;
+  --bubble-outgoing: #34394A;
+  --bubble-outgoing-text: #F1F3F5;
+  --bubble-incoming: #1E2533;
+  --bubble-incoming-text: #B5B9BC;
+  --text-primary: #B5B9BC;
+  --accent: #D0D4D7;
+  --text-muted: #34394A;
+  --border: #34394A;
+  --background: #0B1421;
+  --foreground: #B5B9BC;
+}
+
+/* Smooth 0.3s ease transitions for theme switches */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+/* Prevent unwanted mobile behaviors */
+html, body {
+  height: 100%;
+  overscroll-behavior-y: none;
+  -webkit-tap-highlight-color: transparent;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-cairo), Cairo, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent iOS Safari 16px input zoom */
+input, textarea, select, button {
+  font-size: 16px;
+  touch-action: manipulation;
+}
+
+/* Safe area insets for notched phones */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 12px);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 8px);
+}
+
+/* Custom scrollbar for dark aesthetic */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  opacity: 0.5;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+  opacity: 0.8;
+}
+
+/* Native-like smooth scrolling */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Large Text Mode (وضع الخط الكبير)
+   ═══════════════════════════════════════════════════════════════ */
+.large-text-mode {
+  font-size: 18px !important;
+}
+
+.large-text-mode p {
+  font-size: 16.5px !important;
+  line-height: 1.8 !important;
+}
+
+.large-text-mode textarea,
+.large-text-mode input {
+  font-size: 16px !important;
+}
+
+.large-text-mode .message-content {
+  font-size: 16px !important;
+  line-height: 1.75 !important;
+}
+
+.large-text-mode .date-pill {
+  font-size: 13px !important;
+}

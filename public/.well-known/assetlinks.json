@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.lamma.app",
+        "sha256_cert_fingerprints": ["A0:16:12:ED:B2:3A:33:5C:D7:8D:D3:5C:F8:E8:EE:35:05:5F:16:10:17:86:7D:73:B2:95:00:4A:53:D1:8E:A8"]
+      }
+    }]

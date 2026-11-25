@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sakura Dusk (Default) -->
+    <color name="sakura_bg_main">#1B0C1A</color>
+    <color name="sakura_bg_surface">#2D222F</color>
+    <color name="sakura_bubble_outgoing">#6D3C52</color>
+    <color name="sakura_bubble_incoming">#4B2138</color>
+    <color name="sakura_text_primary">#FADCD5</color>
+    <color name="sakura_text_muted">#765D67</color>
+
+    <!-- Velvet Ink -->
+    <color name="velvet_bg_main">#0B1421</color>
+    <color name="velvet_bg_surface">#283041</color>
+    <color name="velvet_bubble_outgoing">#34394A</color>
+    <color name="velvet_bubble_incoming">#1E2533</color>
+    <color name="velvet_text_primary">#B5B9BC</color>
+    <color name="velvet_accent">#D0D4D7</color>
+    <color name="velvet_text_muted">#34394A</color>
+</resources>

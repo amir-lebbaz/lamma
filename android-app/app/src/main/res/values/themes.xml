@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Lamma" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/sakura_bg_main</item>
+        <item name="android:navigationBarColor">@color/sakura_bg_main</item>
+        <item name="android:windowBackground">@color/sakura_bg_main</item>
+    </style>
+</resources>
