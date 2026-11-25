@@ -20,19 +20,26 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Setup Gradle
+      - name: Setup Gradle 8.7
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.7"
+          validate-wrappers: false
 
       - name: Accept Android SDK Licenses
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
+      - name: Generate Official Gradle Wrapper
+        working-directory: android-app
+        run: |
+          gradle wrapper --gradle-version 8.7
+          chmod +x gradlew
+
       - name: Build Release APK with Gradle
         working-directory: android-app
         run: |
-          gradle :app:assembleRelease --no-daemon --stacktrace
+          ./gradlew :app:assembleRelease --no-daemon --stacktrace
 
       - name: Copy & Name APK Artifact
         run: |
