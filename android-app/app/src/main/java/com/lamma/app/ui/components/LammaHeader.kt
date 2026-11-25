@@ -82,14 +82,15 @@ fun LammaHeader(
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(6.dp)
+                                .size(7.dp)
                                 .clip(CircleShape)
-                                .background(colors.accentPrimary)
+                                .background(androidx.compose.ui.graphics.Color(0xFF22C55E))
                         )
                         Text(
                             text = "$onlineCount متصل الآن",
-                            color = colors.textMuted,
-                            fontSize = 11.sp
+                            color = androidx.compose.ui.graphics.Color(0xFF22C55E),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium
                         )
                     }
                 }

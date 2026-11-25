@@ -456,10 +456,7 @@ class ChatService {
     }
 
     const key = getStorageKey('checklist', roomId);
-    return safeGetItem<ChecklistItem[]>(key, [
-      { id: 'item-1', room_id: roomId, text: 'خبز طازج 🥖', is_completed: false, added_by: 'الوالدة', created_at: new Date().toISOString() },
-      { id: 'item-2', room_id: roomId, text: 'حليب 🥛', is_completed: true, added_by: 'أحمد', completed_by: 'سارة', created_at: new Date().toISOString() },
-    ]);
+    return safeGetItem<ChecklistItem[]>(key, []);
   }
 
   async saveChecklist(roomId: string, items: ChecklistItem[]): Promise<void> {
@@ -927,6 +924,28 @@ class ChatService {
         payload: member.id,
       });
     }
+  }
+
+  // Get all registered members in a room
+  async getMembers(roomId: string = 'bayt-al-aela'): Promise<Member[]> {
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('family_members')
+          .select('*')
+          .eq('room_id', roomId)
+          .not('display_name', 'like', '%_قديم%')
+          .order('display_name', { ascending: true });
+        if (!error && data) return data as Member[];
+      } catch (err) {
+        console.warn('Supabase getMembers error:', err);
+      }
+    }
+    const key = getStorageKey('members', roomId);
+    const membersMap = safeGetItem<Record<string, Member>>(key, {});
+    return Object.values(membersMap).filter(
+      (m) => !m.id.startsWith('member-') && !m.display_name.includes('_قديم')
+    );
   }
 
   // Get REAL members list with true Online / Offline statuses

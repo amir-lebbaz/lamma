@@ -81,7 +81,8 @@ fun LammaAppTheme(
     CompositionLocalProvider(
         LocalLammaColors provides colors,
         LocalLargeTextMode provides isLargeText,
-        LocalUltraLiteMode provides isUltraLite
+        LocalUltraLiteMode provides isUltraLite,
+        androidx.compose.ui.platform.LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Rtl
     ) {
         MaterialTheme(
             colorScheme = materialColorScheme,

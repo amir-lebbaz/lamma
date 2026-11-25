@@ -14,10 +14,9 @@ import {
   Bell,
   BellOff,
   Type,
-  Smartphone,
-  Download,
   HardDrive,
   Eraser,
+  Zap,
 } from 'lucide-react';
 import { compressImage } from '@/lib/image-utils';
 import { clearLocalMediaCache, getLocalMediaCount } from '@/lib/media-storage';
@@ -61,6 +60,7 @@ export default function SettingsModal({
   );
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [largeTextMode, setLargeTextMode] = useState(false);
+  const [ultraLiteMode, setUltraLiteMode] = useState(false);
   const [cachedMediaCount, setCachedMediaCount] = useState<number>(0);
   const [cacheFeedback, setCacheFeedback] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -81,6 +81,13 @@ export default function SettingsModal({
       setLargeTextMode(isLarge);
       if (isLarge) {
         document.documentElement.classList.add('large-text-mode');
+      }
+
+      const storedLite = localStorage.getItem('lamma_ultra_lite_mode');
+      const isLite = storedLite === 'true';
+      setUltraLiteMode(isLite);
+      if (isLite) {
+        document.documentElement.classList.add('ultra-lite-mode');
       }
 
       // Check count of locally cached photos
@@ -111,6 +118,17 @@ export default function SettingsModal({
       document.documentElement.classList.add('large-text-mode');
     } else {
       document.documentElement.classList.remove('large-text-mode');
+    }
+  };
+
+  const toggleUltraLite = () => {
+    const nextVal = !ultraLiteMode;
+    setUltraLiteMode(nextVal);
+    localStorage.setItem('lamma_ultra_lite_mode', String(nextVal));
+    if (nextVal) {
+      document.documentElement.classList.add('ultra-lite-mode');
+    } else {
+      document.documentElement.classList.remove('ultra-lite-mode');
     }
   };
 
@@ -445,6 +463,34 @@ export default function SettingsModal({
             </button>
           </div>
 
+          {/* 5. Ultra-Lite Mode (وضع الخفة القصوى / وضع الوالد) */}
+          <div className="p-3 rounded-[10px] bg-[var(--bg-elevated)]/30 border border-[var(--border-subtle)] flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-[10px] bg-[var(--accent-primary)] text-[var(--text-primary)] flex items-center justify-center flex-shrink-0 border border-[var(--border-subtle)]">
+                <Zap className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="text-xs font-semibold text-[var(--text-primary)]">
+                  وضع الخفة القصوى / وضع الوالد
+                </div>
+                <div className="text-[10px] text-[var(--text-muted)]">
+                  إلغاء التأثيرات الحركية والشفافية لأقصى سرعة واستجابة
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={toggleUltraLite}
+              className={`w-11 h-6 rounded-full transition-colors p-0.5 flex items-center ${
+                ultraLiteMode
+                  ? 'bg-[var(--accent-primary)] justify-start'
+                  : 'bg-[var(--bg-canvas)] justify-end'
+              }`}
+            >
+              <div className="w-5 h-5 rounded-full bg-[var(--text-primary)]" />
+            </button>
+          </div>
+
           {/* 5. Sound Notification Toggle */}
           <div className="p-3 rounded-[10px] bg-[var(--bg-elevated)]/30 border border-[var(--border-subtle)] flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -477,32 +523,7 @@ export default function SettingsModal({
             </button>
           </div>
 
-          {/* 6. Mobile App Download Card */}
-          <div className="p-3 rounded-[10px] bg-[var(--bg-elevated)]/40 border border-[var(--border-subtle)] flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-[10px] bg-[var(--accent-primary)] text-[var(--text-primary)] flex items-center justify-center flex-shrink-0 border border-[var(--border-subtle)]">
-                <Smartphone className="w-4 h-4" />
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs font-semibold text-[var(--text-primary)] truncate">
-                  تطبيق أندرويد للهاتف (APK)
-                </div>
-                <div className="text-[10px] text-[var(--text-muted)] truncate">
-                  تطبيق أصلي وسريع للهواتف
-                </div>
-              </div>
-            </div>
-            <a
-              href="/lamma.apk"
-              download="lamma.apk"
-              className="px-3 py-1.5 rounded-[10px] bg-[var(--accent-primary)] hover:opacity-90 text-[var(--text-primary)] text-xs font-medium flex items-center gap-1.5 transition active:scale-95 flex-shrink-0 border border-[var(--border-subtle)]"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>تحميل</span>
-            </a>
-          </div>
-
-          {/* 7. Clear Local Media Cache (مسح الصور المحفوظة محلياً) */}
+          {/* 6. Clear Local Media Cache (مسح الصور المحفوظة محلياً) */}
           <div className="p-3 rounded-[10px] bg-[var(--bg-elevated)]/30 border border-[var(--border-subtle)] flex items-center justify-between gap-2">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-8 h-8 rounded-[10px] bg-[var(--accent-primary)] text-[var(--text-primary)] flex items-center justify-center flex-shrink-0 border border-[var(--border-subtle)]">

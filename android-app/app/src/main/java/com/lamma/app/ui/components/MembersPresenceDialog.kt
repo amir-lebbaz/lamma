@@ -161,11 +161,23 @@ fun MembersPresenceDialog(
                                                 fontSize = 13.5.sp,
                                                 fontWeight = FontWeight.SemiBold
                                             )
-                                            Text(
-                                                text = presenceText,
-                                                color = if (presenceText.contains("🟢")) Color(0xFF81C784) else colors.textMuted,
-                                                fontSize = 11.sp
-                                            )
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(6.dp)
+                                                        .clip(CircleShape)
+                                                        .background(if (!isOffline) Color(0xFF22C55E) else Color(0xFFEF4444))
+                                                )
+                                                Text(
+                                                    text = presenceText,
+                                                    color = if (!isOffline) Color(0xFF22C55E) else Color(0xFFEF4444).copy(alpha = 0.85f),
+                                                    fontSize = 11.sp,
+                                                    fontWeight = if (!isOffline) FontWeight.Medium else FontWeight.Normal
+                                                )
+                                            }
                                         }
                                     }
                                 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Member, AVATAR_COLORS } from '@/types';
 import { chatService } from '@/lib/chat-service';
 import {
@@ -11,8 +11,6 @@ import {
   Eye,
   EyeOff,
   Loader2,
-  Smartphone,
-  Download,
 } from 'lucide-react';
 
 interface EntryScreenProps {
@@ -25,8 +23,18 @@ export default function EntryScreen({ onAuthenticated }: EntryScreenProps) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [avatarColor, setAvatarColor] = useState(AVATAR_COLORS[0]);
+  const [existingMembers, setExistingMembers] = useState<Member[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    chatService
+      .getMembers()
+      .then((m) => {
+        setExistingMembers(m.filter((x) => !x.display_name.includes('_قديم')));
+      })
+      .catch(() => {});
+  }, []);
 
   const switchMode = (newMode: 'login' | 'register') => {
     setMode(newMode);
@@ -113,6 +121,41 @@ export default function EntryScreen({ onAuthenticated }: EntryScreenProps) {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-3.5">
+            {/* Quick Member Selection Chips for Login */}
+            {mode === 'login' && existingMembers.length > 0 && (
+              <div className="space-y-1.5 pb-1">
+                <label className="block text-[11px] font-medium text-[var(--text-muted)]">
+                  اختر اسمك بنقرة واحدة:
+                </label>
+                <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-0.5 smooth-scroll">
+                  {existingMembers.map((m) => {
+                    const isSelected = displayName === m.display_name;
+                    return (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => {
+                          setDisplayName(m.display_name);
+                          if (error) setError('');
+                        }}
+                        className={`px-2.5 py-1 rounded-[8px] text-xs flex items-center gap-1.5 border transition ${
+                          isSelected
+                            ? 'bg-[var(--accent-primary)] text-[var(--text-primary)] border-[var(--border-subtle)] font-semibold shadow-sm'
+                            : 'bg-[var(--bg-canvas)] text-[var(--text-primary)] border-[var(--border-subtle)] hover:bg-[var(--bg-elevated)]/50'
+                        }`}
+                      >
+                        <span
+                          className="w-2 h-2 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: m.avatar_color }}
+                        />
+                        <span>{m.display_name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Display Name Input */}
             <div>
               <label className="block text-xs font-medium text-[var(--text-primary)] mb-1.5">
@@ -255,20 +298,6 @@ export default function EntryScreen({ onAuthenticated }: EntryScreenProps) {
               </button>
             )}
           </div>
-        </div>
-
-        {/* Direct APK Download Button on Welcome Screen */}
-        <div className="mt-4 text-center">
-          <a
-            href="/lamma.apk"
-            download="lamma.apk"
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-[10px] bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-primary)] text-xs font-medium hover:bg-[var(--bg-elevated)]/40 transition active:scale-95"
-            title="تحميل ملف APK لتثبيت تطبيق لَمّة على هواتف أندرويد"
-          >
-            <Smartphone className="w-4 h-4 text-[var(--text-primary)]" />
-            <span>تحميل تطبيق «لَمّة» للهاتف (ملف APK مباشر)</span>
-            <Download className="w-3.5 h-3.5 text-[var(--text-primary)]" />
-          </a>
         </div>
       </div>
 

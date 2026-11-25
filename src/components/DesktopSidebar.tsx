@@ -14,8 +14,6 @@ import {
   Camera,
   Palette,
   Users,
-  Smartphone,
-  Download,
 } from 'lucide-react';
 import { formatRelativeTime } from '@/lib/format-date';
 import { compressImage } from '@/lib/image-utils';
@@ -170,32 +168,7 @@ export default function DesktopSidebar({
         </div>
       </div>
 
-      {/* 2. Standalone App Download Card (Lamma APK) */}
-      <div className="p-2.5 bg-[var(--bg-elevated)]/40 rounded-[14px] border border-[var(--border-subtle)] flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="w-8 h-8 rounded-[10px] bg-[var(--accent-primary)]/40 text-[var(--text-primary)] flex items-center justify-center flex-shrink-0 border border-[var(--border-subtle)]">
-            <Smartphone className="w-4 h-4" />
-          </div>
-          <div className="min-w-0">
-            <div className="font-semibold text-xs text-[var(--text-primary)]">
-              تطبيق «لَمّة» (APK)
-            </div>
-            <div className="text-[10px] text-[var(--text-muted)] truncate">
-              تطبيق أندرويد مستقل وخفيف
-            </div>
-          </div>
-        </div>
-        <a
-          href="/lamma.apk"
-          download="lamma.apk"
-          className="px-2.5 py-1.5 rounded-[10px] bg-[var(--accent-primary)] hover:opacity-90 text-[var(--text-primary)] text-[11px] font-medium flex items-center gap-1 transition active:scale-95 flex-shrink-0 border border-[var(--border-subtle)]"
-        >
-          <Download className="w-3.5 h-3.5" />
-          <span>تحميل</span>
-        </a>
-      </div>
-
-      {/* 3. Pinned Family Notice */}
+      {/* 2. Pinned Family Notice */}
       <div className="p-3.5 bg-[var(--bg-elevated)]/30 rounded-[14px] border border-[var(--border-subtle)] space-y-2">
         <div className="flex items-center justify-between text-xs font-semibold text-[var(--text-primary)]">
           <div className="flex items-center gap-1.5">
@@ -341,8 +314,9 @@ export default function DesktopSidebar({
             <Users className="w-3.5 h-3.5 text-[var(--text-primary)]" />
             <span>أفراد العائلة</span>
           </div>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--bg-surface)] text-[var(--text-muted)] font-medium border border-[var(--border-subtle)]">
-            {onlineMembers.length} متصل
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950/40 text-emerald-400 font-semibold border border-emerald-500/30 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>{onlineMembers.length} متصل</span>
           </span>
         </div>
 
@@ -406,7 +380,10 @@ export default function DesktopSidebar({
                   )}
                 </div>
               </div>
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)] flex-shrink-0"></span>
+              <span className="flex items-center gap-1 flex-shrink-0">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(34,197,94,0.8)] animate-pulse" title="متصل الآن"></span>
+                <span className="text-[10px] text-emerald-400 font-medium">متصل</span>
+              </span>
             </div>
           ))}
 
@@ -437,9 +414,12 @@ export default function DesktopSidebar({
                   </span>
                 </div>
               </div>
-              <span className="text-[9px] text-[var(--text-muted)] truncate">
-                {lastSeenText}
-              </span>
+              <div className="flex items-center gap-1.5 flex-shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500/80 flex-shrink-0" title="غير متصل"></span>
+                <span className="text-[9px] text-[var(--text-muted)] truncate">
+                  {lastSeenText}
+                </span>
+              </div>
             </div>
           ))}
         </div>

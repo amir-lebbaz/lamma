@@ -21,7 +21,7 @@ object PresenceManager {
      */
     fun formatPresence(lastSeenIso: String?): String {
         if (lastSeenIso.isNullOrBlank()) {
-            return "غير متصل ⚪"
+            return "غير متصل 🔴"
         }
 
         return try {
@@ -31,18 +31,18 @@ object PresenceManager {
 
             when {
                 diffMinutes < 2 -> "متصل الآن 🟢"
-                diffMinutes < 60 -> "غير متصل منذ $diffMinutes دقيقة ⚪"
+                diffMinutes < 60 -> "غير متصل منذ $diffMinutes دقيقة 🔴"
                 diffMinutes < 1440 -> {
                     val hours = diffMinutes / 60
-                    "غير متصل منذ $hours ساعة ⚪"
+                    "غير متصل منذ $hours ساعة 🔴"
                 }
                 else -> {
                     val days = diffMinutes / 1440
-                    "غير متصل منذ $days يوم ⚪"
+                    "غير متصل منذ $days يوم 🔴"
                 }
             }
         } catch (e: Exception) {
-            "غير متصل ⚪"
+            "غير متصل 🔴"
         }
     }
 

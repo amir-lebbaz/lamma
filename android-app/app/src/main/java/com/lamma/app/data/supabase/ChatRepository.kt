@@ -18,8 +18,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import java.util.UUID
 
@@ -43,6 +48,7 @@ class ChatRepository(
     private val _typingMember = MutableStateFlow<String?>(null)
     val typingMember: StateFlow<String?> = _typingMember.asStateFlow()
 
+    @Volatile
     private var currentClearedAt: String? = null
 
     fun setClearedAtCutoff(clearedAt: String?) {
@@ -69,36 +75,85 @@ class ChatRepository(
                 currentClearedAt = clearedAt
             }
 
-            // Load Room
-            val roomData = LammaSupabase.postgrest.from("family_rooms")
-                .select {
-                    filter { eq("id", "bayt-al-aela") }
-                }.decodeSingleOrNull<Room>()
-            if (roomData != null) {
-                _room.value = roomData
+            // 1. Load Room
+            try {
+                val roomData = LammaSupabase.postgrest.from("family_rooms")
+                    .select {
+                        filter { eq("id", "bayt-al-aela") }
+                    }.decodeSingleOrNull<Room>()
+                if (roomData != null) {
+                    _room.value = roomData
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
 
-            // Load Members
-            val membersList = LammaSupabase.postgrest.from("family_members")
-                .select {
-                    order("created_at", Order.ASCENDING)
-                }.decodeList<Member>()
-            _members.value = membersList
+            // 2. Load Members
+            try {
+                val membersList = LammaSupabase.postgrest.from("family_members")
+                    .select {
+                        order("created_at", Order.ASCENDING)
+                    }.decodeList<Member>()
+                _members.value = membersList
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
 
-            // Load Messages
-            val msgs = LammaSupabase.postgrest.from("family_messages")
-                .select {
-                    filter { eq("room_id", "bayt-al-aela") }
-                    order("created_at", Order.DESCENDING)
-                    limit(60)
-                }.decodeList<Message>()
+            // 3. Load Shared Checklist («نواقص البيت») from Supabase
+            try {
+                val checklistRow = LammaSupabase.postgrest.from("family_messages")
+                    .select {
+                        filter { eq("id", "checklist-bayt-al-aela") }
+                    }.decodeSingleOrNull<JsonObject>()
+                val content = checklistRow?.get("content")?.jsonPrimitive?.contentOrNull
+                if (content != null && content.startsWith("__CHECKLIST__")) {
+                    val rawJson = content.removePrefix("__CHECKLIST__")
+                    val items = json.decodeFromString<List<ChecklistItem>>(rawJson)
+                    _checklist.value = items
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
 
-            val cutoff = currentClearedAt
-            _messages.value = if (cutoff != null) {
-                msgs.filter { it.createdAt > cutoff }
-            } else {
-                msgs
-            }.distinctBy { it.id }.sortedByDescending { it.createdAt }
+            // 4. Load Messages & Reactions
+            try {
+                val rawMsgs = LammaSupabase.postgrest.from("family_messages")
+                    .select {
+                        filter { eq("room_id", "bayt-al-aela") }
+                        order("created_at", Order.DESCENDING)
+                        limit(60)
+                    }.decodeList<Message>()
+
+                // Filter out checklist records from chat feed
+                val cleanMsgs = rawMsgs.filterNot {
+                    it.id.startsWith("checklist-") ||
+                    it.id.startsWith("demo-") ||
+                    (it.content != null && it.content.startsWith("__CHECKLIST__"))
+                }
+
+                // Fetch Reactions
+                val reactionsList = try {
+                    LammaSupabase.postgrest.from("family_reactions")
+                        .select()
+                        .decodeList<Reaction>()
+                } catch (e: Exception) {
+                    emptyList()
+                }
+
+                val reactionsByMsg = reactionsList.groupBy { it.messageId }
+                val messagesWithReactions = cleanMsgs.map { msg ->
+                    msg.copy(reactions = reactionsByMsg[msg.id] ?: emptyList())
+                }
+
+                val cutoff = currentClearedAt
+                _messages.value = if (cutoff != null) {
+                    messagesWithReactions.filter { it.createdAt > cutoff }
+                } else {
+                    messagesWithReactions
+                }.distinctBy { it.id }.sortedByDescending { it.createdAt }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -113,14 +168,34 @@ class ChatRepository(
                 filter = "room_id=eq.bayt-al-aela"
             }
 
+            val reactionFlow = channel.postgresChangeFlow<PostgresAction>(schema = "public") {
+                table = "family_reactions"
+            }
+
+            val roomFlow = channel.postgresChangeFlow<PostgresAction>(schema = "public") {
+                table = "family_rooms"
+                filter = "id=eq.bayt-al-aela"
+            }
+
             channel.subscribe()
 
+            // 1. Message Flow & Checklist updates
             scope.launch {
                 messageFlow.collect { action ->
                     when (action) {
                         is PostgresAction.Insert -> {
                             val record = action.record
                             try {
+                                val id = record["id"]?.jsonPrimitive?.contentOrNull ?: ""
+                                val content = record["content"]?.jsonPrimitive?.contentOrNull ?: ""
+
+                                if (id.startsWith("checklist-") || content.startsWith("__CHECKLIST__")) {
+                                    val rawJson = content.removePrefix("__CHECKLIST__")
+                                    val items = json.decodeFromString<List<ChecklistItem>>(rawJson)
+                                    _checklist.value = items
+                                    return@collect
+                                }
+
                                 val newMsg = json.decodeFromString<Message>(record.toString())
                                 val cutoff = currentClearedAt
                                 if (cutoff == null || newMsg.createdAt > cutoff) {
@@ -134,7 +209,7 @@ class ChatRepository(
                         }
                         is PostgresAction.Delete -> {
                             val oldRecord = action.oldRecord
-                            val id = oldRecord["id"]?.toString()?.replace("\"", "")
+                            val id = oldRecord["id"]?.jsonPrimitive?.contentOrNull
                             if (id != null) {
                                 _messages.value = _messages.value.filter { it.id != id }
                             }
@@ -142,15 +217,85 @@ class ChatRepository(
                         is PostgresAction.Update -> {
                             val record = action.record
                             try {
+                                val id = record["id"]?.jsonPrimitive?.contentOrNull ?: ""
+                                val content = record["content"]?.jsonPrimitive?.contentOrNull ?: ""
+
+                                if (id.startsWith("checklist-") || content.startsWith("__CHECKLIST__")) {
+                                    val rawJson = content.removePrefix("__CHECKLIST__")
+                                    val items = json.decodeFromString<List<ChecklistItem>>(rawJson)
+                                    _checklist.value = items
+                                    return@collect
+                                }
+
                                 val updatedMsg = json.decodeFromString<Message>(record.toString())
                                 _messages.value = _messages.value.map {
-                                    if (it.id == updatedMsg.id) updatedMsg else it
+                                    if (it.id == updatedMsg.id) updatedMsg.copy(reactions = it.reactions) else it
                                 }
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }
                         }
                         else -> Unit
+                    }
+                }
+            }
+
+            // 2. Realtime Reactions Flow
+            scope.launch {
+                reactionFlow.collect { action ->
+                    when (action) {
+                        is PostgresAction.Insert -> {
+                            try {
+                                val reaction = json.decodeFromString<Reaction>(action.record.toString())
+                                _messages.value = _messages.value.map { msg ->
+                                    if (msg.id == reaction.messageId) {
+                                        val existing = msg.reactions.filterNot { it.userId == reaction.userId && it.emoji == reaction.emoji }
+                                        msg.copy(reactions = existing + reaction)
+                                    } else msg
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                        is PostgresAction.Delete -> {
+                            try {
+                                val oldRecord = action.oldRecord
+                                val reactionId = oldRecord["id"]?.jsonPrimitive?.contentOrNull
+                                val messageId = oldRecord["message_id"]?.jsonPrimitive?.contentOrNull
+                                val userId = oldRecord["sender_id"]?.jsonPrimitive?.contentOrNull
+                                    ?: oldRecord["user_id"]?.jsonPrimitive?.contentOrNull
+                                val emoji = oldRecord["emoji"]?.jsonPrimitive?.contentOrNull
+
+                                if (messageId != null) {
+                                    _messages.value = _messages.value.map { msg ->
+                                        if (msg.id == messageId) {
+                                            val filtered = msg.reactions.filterNot {
+                                                (reactionId != null && it.id == reactionId) ||
+                                                (it.userId == userId && it.emoji == emoji)
+                                            }
+                                            msg.copy(reactions = filtered)
+                                        } else msg
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                        else -> Unit
+                    }
+                }
+            }
+
+            // 3. Realtime Room Flow (Pinned Notice updates)
+            scope.launch {
+                roomFlow.collect { action ->
+                    if (action is PostgresAction.Update) {
+                        try {
+                            val updatedRoom = json.decodeFromString<Room>(action.record.toString())
+                            _room.value = updatedRoom
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
             }
@@ -197,11 +342,6 @@ class ChatRepository(
         }
     }
 
-    /**
-     * Zero-database-quota photo architecture:
-     * Broadcasts photo payload temporarily or uploads stub with local ID.
-     * Never stores massive Base64 in PostgreSQL permanently!
-     */
     suspend fun sendImageStub(
         sender: Member,
         localImageUri: String,
@@ -242,11 +382,6 @@ class ChatRepository(
         }
     }
 
-    /**
-     * Non-destructive per-user chat history cutoff.
-     * Updates member's cleared_at in Supabase and filters out past messages locally.
-     * All messages remain completely intact and visible for other family members.
-     */
     suspend fun clearChatForUser(member: Member): String = withContext(Dispatchers.IO) {
         val clearedAt = java.time.Instant.now().toString()
         currentClearedAt = clearedAt
@@ -279,10 +414,14 @@ class ChatRepository(
         } else {
             targetMsg.reactions + Reaction(
                 id = UUID.randomUUID().toString(),
+                roomId = "bayt-al-aela",
                 messageId = messageId,
-                userId = user.id,
-                userName = user.displayName,
-                emoji = emoji
+                senderId = user.id,
+                senderName = user.displayName,
+                rawUserId = user.id,
+                rawUserName = user.displayName,
+                emoji = emoji,
+                createdAt = java.time.Instant.now().toString()
             )
         }
 
@@ -295,17 +434,25 @@ class ChatRepository(
                 LammaSupabase.postgrest.from("family_reactions").delete {
                     filter {
                         eq("message_id", messageId)
-                        eq("user_id", user.id)
+                        or {
+                            eq("sender_id", user.id)
+                            eq("user_id", user.id)
+                        }
                         eq("emoji", emoji)
                     }
                 }
             } else {
                 LammaSupabase.postgrest.from("family_reactions").insert(
                     buildJsonObject {
+                        put("id", "react-${System.currentTimeMillis()}-${(1000..9999).random()}")
+                        put("room_id", "bayt-al-aela")
                         put("message_id", messageId)
+                        put("sender_id", user.id)
+                        put("sender_name", user.displayName)
                         put("user_id", user.id)
                         put("user_name", user.displayName)
                         put("emoji", emoji)
+                        put("created_at", java.time.Instant.now().toString())
                     }
                 )
             }
@@ -347,25 +494,60 @@ class ChatRepository(
         }
     }
 
-    // Household Checklist («نواقص البيت»)
+    // Household Checklist («نواقص البيت») with persistent Supabase synchronization
     fun addChecklistItem(text: String, addedBy: String) {
         val item = ChecklistItem(
-            id = UUID.randomUUID().toString(),
-            text = text,
+            id = "chk-${System.currentTimeMillis()}-${(1000..9999).random()}",
+            roomId = "bayt-al-aela",
+            text = text.trim(),
             isCompleted = false,
             addedBy = addedBy,
             createdAt = java.time.Instant.now().toString()
         )
-        _checklist.value = _checklist.value + item
+        val updated = listOf(item) + _checklist.value.filter { it.id != item.id }
+        _checklist.value = updated
+        scope.launch {
+            saveChecklistToSupabase(updated)
+        }
     }
 
-    fun toggleChecklistItem(id: String) {
-        _checklist.value = _checklist.value.map {
-            if (it.id == id) it.copy(isCompleted = !it.isCompleted) else it
+    fun toggleChecklistItem(id: String, completedBy: String = "") {
+        val updated = _checklist.value.map {
+            if (it.id == id) {
+                val next = !it.isCompleted
+                it.copy(isCompleted = next, completedBy = if (next) completedBy.ifBlank { null } else null)
+            } else it
+        }
+        _checklist.value = updated
+        scope.launch {
+            saveChecklistToSupabase(updated)
         }
     }
 
     fun removeChecklistItem(id: String) {
-        _checklist.value = _checklist.value.filter { it.id != id }
+        val updated = _checklist.value.filter { it.id != id }
+        _checklist.value = updated
+        scope.launch {
+            saveChecklistToSupabase(updated)
+        }
+    }
+
+    private suspend fun saveChecklistToSupabase(items: List<ChecklistItem>) = withContext(Dispatchers.IO) {
+        try {
+            val jsonPayload = "__CHECKLIST__" + json.encodeToString(items)
+            LammaSupabase.postgrest.from("family_messages").upsert(
+                buildJsonObject {
+                    put("id", "checklist-bayt-al-aela")
+                    put("room_id", "bayt-al-aela")
+                    put("sender_id", "system")
+                    put("sender_name", "نواقص البيت")
+                    put("sender_color", "#415F45")
+                    put("content", jsonPayload)
+                    put("created_at", java.time.Instant.now().toString())
+                }
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

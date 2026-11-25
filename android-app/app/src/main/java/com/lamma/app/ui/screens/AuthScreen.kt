@@ -55,6 +55,8 @@ fun AuthScreen(
     // Register fields
     var newDisplayName by remember { mutableStateOf("") }
     var newNickname by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
+    var isNewPasswordVisible by remember { mutableStateOf(false) }
     var selectedColorIndex by remember { mutableIntStateOf(0) }
     var isSubmitting by remember { mutableStateOf(false) }
 
@@ -230,7 +232,33 @@ fun AuthScreen(
                                     Toast.makeText(context, "الرجاء اختيار اسمك من القائمة", Toast.LENGTH_SHORT).show()
                                     return@Button
                                 }
-                                onLoginSuccess(selectedMember!!)
+                                val member = selectedMember!!
+                                if (password.trim().length < 4) {
+                                    Toast.makeText(context, "كلمة السر يجب أن تتكون من 4 أحرف أو أرقام على الأقل", Toast.LENGTH_SHORT).show()
+                                    return@Button
+                                }
+                                val hashed = hashPassword(password)
+                                if (member.passwordHash != null) {
+                                    if (member.passwordHash != hashed) {
+                                        Toast.makeText(context, "كلمة السر غير صحيحة لهذا الاسم", Toast.LENGTH_SHORT).show()
+                                        return@Button
+                                    }
+                                    onLoginSuccess(member)
+                                } else {
+                                    // First time password setup for legacy member
+                                    scope.launch {
+                                        try {
+                                            LammaSupabase.postgrest.from("family_members").update(
+                                                mapOf("password_hash" to hashed, "last_seen_at" to java.time.Instant.now().toString())
+                                            ) {
+                                                filter { eq("id", member.id) }
+                                            }
+                                        } catch (e: Exception) {
+                                            e.printStackTrace()
+                                        }
+                                        onLoginSuccess(member.copy(passwordHash = hashed))
+                                    }
+                                }
                             },
                             colors = ButtonDefaults.buttonColors(containerColor = colors.accentPrimary),
                             border = BorderStroke(1.dp, colors.borderSubtle),
@@ -270,6 +298,38 @@ fun AuthScreen(
                             value = newNickname,
                             onValueChange = { newNickname = it },
                             label = { Text("اللقب أو الصفة (مثال: أم العيال، أبو علي)") },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = colors.textPrimary,
+                                unfocusedTextColor = colors.textPrimary,
+                                focusedBorderColor = colors.accentPrimary,
+                                unfocusedBorderColor = colors.borderSubtle,
+                                focusedContainerColor = colors.bgCanvas,
+                                unfocusedContainerColor = colors.bgCanvas
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        OutlinedTextField(
+                            value = newPassword,
+                            onValueChange = { newPassword = it },
+                            label = { Text("كلمة المرور العائلية (4 أحرف على الأقل)") },
+                            leadingIcon = {
+                                Icon(imageVector = Icons.Default.Lock, contentDescription = null, tint = colors.textMuted)
+                            },
+                            trailingIcon = {
+                                IconButton(onClick = { isNewPasswordVisible = !isNewPasswordVisible }) {
+                                    Icon(
+                                        imageVector = if (isNewPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                        contentDescription = null,
+                                        tint = colors.textMuted
+                                    )
+                                }
+                            },
+                            visualTransformation = if (isNewPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = colors.textPrimary,
                                 unfocusedTextColor = colors.textPrimary,
@@ -326,15 +386,21 @@ fun AuthScreen(
                                     Toast.makeText(context, "الرجاء كتابة اسمك", Toast.LENGTH_SHORT).show()
                                     return@Button
                                 }
+                                if (newPassword.trim().length < 4) {
+                                    Toast.makeText(context, "كلمة السر يجب أن تتكون من 4 أحرف أو أرقام على الأقل", Toast.LENGTH_SHORT).show()
+                                    return@Button
+                                }
                                 scope.launch {
                                     isSubmitting = true
                                     val hexColor = "#" + Integer.toHexString(AvatarColors[selectedColorIndex].hashCode()).takeLast(6).uppercase()
+                                    val hashed = hashPassword(newPassword)
                                     val newMember = Member(
                                         id = UUID.randomUUID().toString(),
                                         username = name.lowercase().replace(" ", "_"),
                                         displayName = name,
                                         nickname = newNickname.trim().ifEmpty { null },
                                         avatarColor = hexColor,
+                                        passwordHash = hashed,
                                         createdAt = java.time.Instant.now().toString()
                                     )
 
@@ -371,4 +437,10 @@ fun AuthScreen(
             }
         }
     }
+}
+
+private fun hashPassword(password: String): String {
+    val bytes = java.security.MessageDigest.getInstance("SHA-256")
+        .digest(password.trim().toByteArray(Charsets.UTF_8))
+    return bytes.joinToString("") { "%02x".format(it) }
 }

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Member, Room, MemberWithStatus } from '@/types';
-import { Pin, Users, Settings, Download, ShoppingCart, Eraser } from 'lucide-react';
+import { Pin, Users, Settings, ShoppingCart, Eraser } from 'lucide-react';
 
 interface HeaderProps {
   room: Room;
@@ -92,10 +92,10 @@ export default function Header({
                 onClick={onOpenMembers}
                 className="flex items-center gap-1.5 text-[11px] text-[var(--text-muted)] hover:text-[var(--text-primary)]"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)]"></span>
-                <span className="font-medium text-[var(--text-primary)]">{onlineCount} متصل</span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(34,197,94,0.7)] animate-pulse"></span>
+                <span className="font-semibold text-emerald-400">{onlineCount} متصل</span>
                 {offlineCount > 0 && (
-                  <span className="hidden sm:inline text-[var(--text-muted)] font-normal">
+                  <span className="hidden sm:inline text-rose-400/80 font-normal">
                     • {offlineCount} غير متصل
                   </span>
                 )}
@@ -106,17 +106,6 @@ export default function Header({
 
         {/* Action Controls */}
         <div className="flex items-center gap-1 sm:gap-1.5">
-          {/* Download App APK Link (Desktop/Tablet) */}
-          <a
-            href="/lamma.apk"
-            download="lamma.apk"
-            className="hidden sm:flex px-2.5 py-1.5 rounded-[10px] text-[var(--text-primary)] hover:bg-white/5 border border-[var(--border-subtle)] transition active:scale-95 items-center gap-1.5 text-[11px] font-medium"
-            title="تحميل تطبيق لَمّة للهاتف (APK أندرويد)"
-          >
-            <Download className="w-3.5 h-3.5 text-[var(--text-primary)]" />
-            <span>التطبيق</span>
-          </a>
-
           {/* Pinned Notice Button */}
           <button
             type="button"

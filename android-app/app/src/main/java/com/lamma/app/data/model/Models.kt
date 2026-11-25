@@ -62,25 +62,37 @@ data class Message(
     val replyToText: String? = null,
     @SerialName("created_at")
     val createdAt: String,
+    @kotlinx.serialization.Transient
     val reactions: List<Reaction> = emptyList(),
     // Client-side local state
+    @kotlinx.serialization.Transient
     val isPending: Boolean = false,
+    @kotlinx.serialization.Transient
     val localImageUri: String? = null
 )
 
 @Serializable
 data class Reaction(
     val id: String? = null,
+    @SerialName("room_id")
+    val roomId: String = "bayt-al-aela",
     @SerialName("message_id")
     val messageId: String,
+    @SerialName("sender_id")
+    val senderId: String = "",
+    @SerialName("sender_name")
+    val senderName: String = "",
     @SerialName("user_id")
-    val userId: String,
+    val rawUserId: String? = null,
     @SerialName("user_name")
-    val userName: String,
+    val rawUserName: String? = null,
     val emoji: String,
     @SerialName("created_at")
     val createdAt: String? = null
-)
+) {
+    val userId: String get() = if (senderId.isNotBlank()) senderId else (rawUserId ?: "")
+    val userName: String get() = if (senderName.isNotBlank()) senderName else (rawUserName ?: "")
+}
 
 @Serializable
 data class Room(
@@ -97,11 +109,15 @@ data class Room(
 @Serializable
 data class ChecklistItem(
     val id: String,
+    @SerialName("room_id")
+    val roomId: String = "bayt-al-aela",
     val text: String,
     @SerialName("is_completed")
     val isCompleted: Boolean = false,
     @SerialName("added_by")
     val addedBy: String,
+    @SerialName("completed_by")
+    val completedBy: String? = null,
     @SerialName("created_at")
     val createdAt: String
 )

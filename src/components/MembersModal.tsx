@@ -61,7 +61,8 @@ export default function MembersModal({
             <h3 className="font-semibold text-sm text-[var(--text-primary)]">
               أفراد «لَمّة» العائلة
             </h3>
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-[var(--bg-canvas)] text-[var(--text-muted)] font-medium border border-[var(--border-subtle)]">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950/40 text-emerald-400 font-semibold border border-emerald-500/30 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
               {onlineMembers.length} متصل
             </span>
           </div>
@@ -104,8 +105,8 @@ export default function MembersModal({
           {/* Online Section */}
           {onlineMembers.length > 0 && (
             <div>
-              <div className="text-[10px] font-semibold text-[var(--text-primary)] mb-1.5 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)]"></span>
+              <div className="text-[10px] font-semibold text-emerald-400 mb-1.5 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(34,197,94,0.7)] animate-pulse"></span>
                 <span>المتصلون الآن ({onlineMembers.length})</span>
               </div>
               <div className="space-y-1.5">
@@ -147,13 +148,16 @@ export default function MembersModal({
                               </span>
                             )}
                           </div>
-                          <span className="text-[10px] text-[var(--text-muted)] font-medium">
+                          <span className="text-[10px] text-emerald-400/80 font-medium">
                             {lastSeenText}
                           </span>
                         </div>
                       </div>
 
-                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)]"></span>
+                      <span className="flex items-center gap-1 text-[10px] text-emerald-400 font-medium">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(34,197,94,0.7)] flex-shrink-0"></span>
+                        متصل
+                      </span>
                     </div>
                   );
                 })}
@@ -164,15 +168,15 @@ export default function MembersModal({
           {/* Offline Section */}
           {offlineMembers.length > 0 && (
             <div>
-              <div className="text-[10px] font-semibold text-[var(--text-muted)] mb-1.5 flex items-center gap-1">
-                <Circle className="w-1.5 h-1.5 text-[var(--text-muted)]" />
+              <div className="text-[10px] font-semibold text-rose-400/90 mb-1.5 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-rose-500/80"></span>
                 <span>غير متصلين ({offlineMembers.length})</span>
               </div>
               <div className="space-y-1.5">
                 {offlineMembers.map(({ member, lastSeenText }) => (
                   <div
                     key={member.id}
-                    className="flex items-center justify-between p-2 rounded-[10px] bg-[var(--bg-canvas)]/50 border border-[var(--border-subtle)]/50 opacity-70"
+                    className="flex items-center justify-between p-2 rounded-[10px] bg-[var(--bg-canvas)]/50 border border-[var(--border-subtle)]/50 opacity-75"
                   >
                     <div className="flex items-center gap-2">
                       <div
@@ -199,6 +203,10 @@ export default function MembersModal({
                           {lastSeenText}
                         </span>
                       </div>
+                    </div>
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-rose-500/80 flex-shrink-0" title="غير متصل"></span>
+                      <span className="text-[9px] text-rose-400/70">غير متصل</span>
                     </div>
                   </div>
                 ))}

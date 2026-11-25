@@ -24,8 +24,6 @@ import SettingsModal from '@/components/SettingsModal';
 import DesktopSidebar from '@/components/DesktopSidebar';
 import ChecklistModal from '@/components/ChecklistModal';
 import ClearChatModal from '@/components/ClearChatModal';
-import PWAInstallBanner from '@/components/PWAInstallBanner';
-import MobileWebDownloadGate from '@/components/MobileWebDownloadGate';
 import { Loader2 } from 'lucide-react';
 
 const PROFILE_STORAGE_KEY = 'family_chat_current_member';
@@ -628,12 +626,6 @@ export default function FamilyChatPage() {
           isDark={currentTheme.isDark}
         />
       </div>
-
-      {/* Mobile Web Download Gate */}
-      <MobileWebDownloadGate />
-
-      {/* PWA Mobile Installation Prompt Banner */}
-      <PWAInstallBanner />
 
       {/* Image Lightbox */}
       <ImageViewerModal
