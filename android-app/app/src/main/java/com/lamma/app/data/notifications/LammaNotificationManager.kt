@@ -96,7 +96,7 @@ class LammaNotificationManager(private val context: Context) {
         isUrgent: Boolean = false
     ) {
         val now = SystemClock.elapsedRealtime()
-        val shouldAlertSound = (now - lastAlertTimestamp) >= THROTTLE_COOLDOWN_MS
+        val shouldAlertSound = isUrgent || ((now - lastAlertTimestamp) >= THROTTLE_COOLDOWN_MS)
 
         if (shouldAlertSound) {
             lastAlertTimestamp = now

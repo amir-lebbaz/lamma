@@ -20,10 +20,10 @@ function getAudioContext(): AudioContext | null {
 }
 
 /**
- * Unlock Web Audio API on first user interaction (click, keydown, touch)
+ * Unlock Web Audio API on user interaction and resume seamlessly across tab wakeups
  */
 export function initAudioUnlock() {
-  if (typeof window === 'undefined' || isAudioUnlocked) return;
+  if (typeof window === 'undefined') return;
 
   const unlock = () => {
     const ctx = getAudioContext();
@@ -36,15 +36,26 @@ export function initAudioUnlock() {
         isAudioUnlocked = true;
       }
     }
-    // Remove listeners once unlocked
-    window.removeEventListener('click', unlock);
-    window.removeEventListener('keydown', unlock);
-    window.removeEventListener('touchstart', unlock);
   };
 
-  window.addEventListener('click', unlock, { once: true, passive: true });
-  window.addEventListener('keydown', unlock, { once: true, passive: true });
-  window.addEventListener('touchstart', unlock, { once: true, passive: true });
+  // Keep listeners active so background tab sleep or browser audio throttling can always be recovered
+  window.addEventListener('click', unlock, { passive: true });
+  window.addEventListener('keydown', unlock, { passive: true });
+  window.addEventListener('touchstart', unlock, { passive: true });
+
+  // Auto-resume when returning to the tab
+  if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        const ctx = getAudioContext();
+        if (ctx && ctx.state === 'suspended') {
+          ctx.resume().then(() => {
+            isAudioUnlocked = true;
+          }).catch(() => {});
+        }
+      }
+    });
+  }
 }
 
 /**

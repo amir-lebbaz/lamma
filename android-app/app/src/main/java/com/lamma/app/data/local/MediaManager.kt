@@ -23,44 +23,61 @@ class MediaManager(private val context: Context) {
         }
 
     /**
-     * Compresses bitmap to max 800px dimension and 70% JPEG quality to keep RAM usage minimal.
-     * Saves compressed file locally in internal storage and returns the local file path.
+     * Memory-safe image compression for low-end devices:
+     * - Uses inJustDecodeBounds to calculate inSampleSize before decoding (prevents heap OOM).
+     * - Decodes with RGB_565 (2 bytes/pixel instead of 4) to cut RAM allocation by 50%.
+     * - Scales to max 800px and saves locally as 70% JPEG.
      */
     suspend fun compressAndSaveLocalImage(sourceUri: Uri): String = withContext(Dispatchers.IO) {
-        val inputStream = context.contentResolver.openInputStream(sourceUri)
-        val originalBitmap = BitmapFactory.decodeStream(inputStream)
-        inputStream?.close()
-
         val maxDim = 800
-        val width = originalBitmap.width
-        val height = originalBitmap.height
-        val scale = if (width > maxDim || height > maxDim) {
-            val ratio = width.toFloat() / height.toFloat()
-            if (ratio > 1) {
-                maxDim.toFloat() / width
-            } else {
-                maxDim.toFloat() / height
-            }
-        } else 1.0f
 
-        val scaledBitmap = if (scale < 1.0f) {
+        // 1. Read image bounds without allocating pixel memory
+        val boundsOptions = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        context.contentResolver.openInputStream(sourceUri)?.use { stream ->
+            BitmapFactory.decodeStream(stream, null, boundsOptions)
+        }
+
+        val origWidth = boundsOptions.outWidth
+        val origHeight = boundsOptions.outHeight
+        if (origWidth <= 0 || origHeight <= 0) return@withContext ""
+
+        // 2. Compute inSampleSize power-of-two downsampling
+        var sampleSize = 1
+        while (origWidth / (sampleSize * 2) >= maxDim && origHeight / (sampleSize * 2) >= maxDim) {
+            sampleSize *= 2
+        }
+
+        // 3. Decode downsampled bitmap using RGB_565 to minimize heap footprint
+        val decodeOptions = BitmapFactory.Options().apply {
+            inSampleSize = sampleSize
+            inPreferredConfig = Bitmap.Config.RGB_565
+        }
+
+        val sampledBitmap = context.contentResolver.openInputStream(sourceUri)?.use { stream ->
+            BitmapFactory.decodeStream(stream, null, decodeOptions)
+        } ?: return@withContext ""
+
+        // 4. Exact downscale to maxDim if still larger
+        val finalBitmap = if (sampledBitmap.width > maxDim || sampledBitmap.height > maxDim) {
+            val scale = maxDim.toFloat() / maxOf(sampledBitmap.width, sampledBitmap.height)
             Bitmap.createScaledBitmap(
-                originalBitmap,
-                (width * scale).toInt(),
-                (height * scale).toInt(),
+                sampledBitmap,
+                (sampledBitmap.width * scale).toInt(),
+                (sampledBitmap.height * scale).toInt(),
                 true
-            )
+            ).also { if (it != sampledBitmap) sampledBitmap.recycle() }
         } else {
-            originalBitmap
+            sampledBitmap
         }
 
         val filename = "lamma_img_${UUID.randomUUID()}.jpg"
         val destFile = File(mediaDir, filename)
 
-        val outputStream = FileOutputStream(destFile)
-        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
-        outputStream.flush()
-        outputStream.close()
+        FileOutputStream(destFile).use { out ->
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 70, out)
+            out.flush()
+        }
+        finalBitmap.recycle()
 
         destFile.absolutePath
     }
