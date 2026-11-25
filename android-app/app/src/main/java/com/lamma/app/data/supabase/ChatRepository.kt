@@ -265,9 +265,6 @@ class ChatRepository(
         }
         clearedAt
     }
-            e.printStackTrace()
-        }
-    }
 
     suspend fun toggleReaction(
         messageId: String,

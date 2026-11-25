@@ -24,7 +24,9 @@ data class Member(
     val createdAt: String? = null,
     @SerialName("cleared_at")
     val clearedAt: String? = null
-)
+) {
+    val lastSeen: String? get() = lastSeenAt
+}
 
 @Serializable
 data class Message(
